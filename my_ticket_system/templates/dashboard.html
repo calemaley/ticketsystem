@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Events</h5>
+                <p class="card-text">{{ event_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Tickets</h5>
+                <p class="card-text">{{ ticket_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Reviews</h5>
+                <p class="card-text">{{ review_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<h3>Recent Bookings</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>User</th>
+            <th>Quantity</th>
+            <th>Booked At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket.event.name }}</td>
+            <td>{{ ticket.user.username }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.booked_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
