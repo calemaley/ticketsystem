@@ -1,0 +1,20 @@
+{% extends "partials/base.html" %}
+{% block title %}Event Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            {{ event.name }}
+        </div>
+        <div class="card-body">
+            <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.name }}">
+            <p>{{ event.description }}</p>
+            <p><strong>Date:</strong> {{ event.date }}</p>
+            <p><strong>Location:</strong> {{ event.location }}</p>
+            <p><strong>Price:</strong> ${{ event.price }}</p>
+            <a href="{% url 'purchase-ticket' event.id %}" class="btn btn-success">Purchase Ticket</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

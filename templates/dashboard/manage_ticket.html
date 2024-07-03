@@ -1,0 +1,19 @@
+{% extends "partials/base.html" %}
+{% block title %}Manage Ticket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            Manage Ticket for {{ ticket.event.name }}
+        </div>
+        <div class="card-body">
+            <p><strong>Date:</strong> {{ ticket.event.date }}</p>
+            <p><strong>Location:</strong> {{ ticket.event.location }}</p>
+            <p><strong>Seat Number:</strong> {{ ticket.seat_number }}</p>
+            <p><strong>Price:</strong> ${{ ticket.price }}</p>
+            <a href="{% url 'cancel-ticket' ticket.id %}" class="btn btn-danger">Cancel Ticket</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

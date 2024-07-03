@@ -1,0 +1,89 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Event Ticket Dashboard{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+{% include 'partials/topnav.html' %}
+<body>
+    <div class="container mt-5">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-dark text-white">
+                    <div class="card-header">
+                        <h2>Dashboard</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-eventmanage' %}">
+                    <div class="card bg-primary text-white shadow">
+                        <div class="card-body text-center">
+                            <h4>Total Events</h4>
+                            <h3>{{ event_count }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-bookingtickets' %}">
+                    <div class="card bg-success text-white shadow">
+                        <div class="card-body text-center">
+                            <h4>Total Bookings</h4>
+                            <h3>{{ ticket_count }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-reviewlist' %}">
+                    <div class="card bg-warning text-dark shadow">
+                        <div class="card-body text-center">
+                            <h4>Total Reviews</h4>
+                            <h3>{{ review_count }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Additional Actions Row -->
+        <div class="row">
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-eventmanage' %}">
+                    <div class="card bg-info text-white shadow">
+                        <div class="card-body text-center">
+                            <h4>Manage Events</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-bookingtickets' %}">
+                    <div class="card bg-secondary text-white shadow">
+                        <div class="card-body text-center">
+                            <h4>Book Tickets</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="text-decoration-none" href="{% url 'dashboard-reviewlist' %}">
+                    <div class="card bg-danger text-white shadow">
+                        <div class="card-body text-center">
+                            <h4>View Reviews</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+{% else %}
+
+{% endif %}
+{% endblock %}

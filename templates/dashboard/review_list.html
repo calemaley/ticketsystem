@@ -1,0 +1,31 @@
+
+
+{% block content %}
+<h2>Reviews</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>User</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr>
+            <td>{{ review.event.name }}</td>
+            <td>{{ review.user.username }}</td>
+            <td>{{ review.rating }}</td>
+            <td>{{ review.comment }}</td>
+            <td>{{ review.created_at }}</td>
+            <td>
+                <a href="{% url 'dashboard-reviewdelete' review.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

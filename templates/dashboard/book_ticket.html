@@ -1,0 +1,36 @@
+
+
+{% block content %}
+<h2>Book Tickets</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Book Ticket</button>
+</form>
+<h3>Tickets List</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>User</th>
+            <th>Quantity</th>
+            <th>Booked At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket.event.name }}</td>
+            <td>{{ ticket.user.username }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.booked_at }}</td>
+            <td>
+                <a href="{% url 'dashboard-ticketupdate' ticket.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'dashboard-ticketdelete' ticket.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

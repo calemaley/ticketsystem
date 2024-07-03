@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticketopia - Home</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/"><img src="https://i.ibb.co/stp4Qdk/logoticket.jpg" alt="Ticketopia Logo" class="logo-img"></a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/events">Events</a></li>
+            <li><a href="/tickets">Tickets</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/admin"><i class="fas fa-user-secret"></i></a></li>
+        </ul>
+    </nav>
+
+    <!-- Banner Section -->
+    <section class="banner">
+        <img src="https://via.placeholder.com/1200x400?text=Ticketopia+Kenyan+Events+Banner" alt="Event Banner" class="banner-img">
+    </section>
+
+    <!-- Upcoming Events Section -->
+    <section class="upcoming-events">
+        <h2>Upcoming Events</h2>
+        <p>Buy tickets in advance to popular events</p>
+        <button class="filter-btn" onclick="location.href='/filter-events'">Browse Events</button>
+    </section>
+
+    <!-- Image Slider Section -->
+    <section class="image-slider">
+        <h2>Popular Events</h2>
+        <div class="slider">
+            <!-- Example Slider Images -->
+            <div class="slide"><img src="https://via.placeholder.com/400x200?text=Event+1" alt="Event 1"></div>
+            <div class="slide"><img src="https://via.placeholder.com/400x200?text=Event+2" alt="Event 2"></div>
+            <div class="slide"><img src="https://via.placeholder.com/400x200?text=Event+3" alt="Event 3"></div>
+        </div>
+    </section>
+
+    <!-- Partnership Section -->
+    <section class="partnership">
+        <h2>Our Partners</h2>
+        <p>We have partnered with some fancy hotels and companies</p>
+        <ul class="partners-list">
+            <li>Partner 1</li>
+            <li>Partner 2</li>
+            <li>Partner 3</li>
+            <!-- Add more partners as needed -->
+        </ul>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact">
+        <h2>Contact Us</h2>
+        <p>Phone: 0792881220</p>
+        <p>Location: Your Company Address</p>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Ticketopia. All rights reserved.</p>
+    </footer>
+</body>
+</html>

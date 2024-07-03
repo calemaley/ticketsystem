@@ -1,0 +1,95 @@
+<!-- templates/user/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #007bff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #ffeb3b;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-control {
+            border-radius: 0;
+            border: 1px solid #ffeb3b;
+            background-color: #0069d9;
+            color: #fff;
+        }
+        .form-control:focus {
+            border-color: #ffeb3b;
+            box-shadow: none;
+            background-color: #0056b3;
+        }
+        .btn-primary {
+            background-color: #ffeb3b;
+            border-color: #ffeb3b;
+            color: #007bff;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #ffca28;
+            border-color: #ffca28;
+            color: #0056b3;
+        }
+        .form-text {
+            color: #ffc107;
+        }
+        .text-center a {
+            color: #ffc107;
+        }
+        .text-center a:hover {
+            color: #ffeb3b;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Login</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            <small class="form-text">Enter your username.</small>
+        </div>
+        <div class="form-group">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            <small class="form-text">Enter your password.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <div class="text-center mt-3">
+        <a href="{% url 'password_reset' %}">Forgot Password?</a>
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'register' %}">Don't have an account? Register here.</a>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

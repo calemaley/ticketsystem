@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Customer Dashboard</h1>
+<h2>Available Events</h2>
+<ul>
+    {% for event in available_events %}
+        <li>{{ event.name }} - {{ event.date }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Purchased Tickets</h2>
+<ul>
+    {% for ticket in purchased_tickets %}
+        <li>{{ ticket.event.name }} - Seat: {{ ticket.seat_number }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Notifications</h2>
+<ul>
+    {% for notification in notifications %}
+        <li>{{ notification.message }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
