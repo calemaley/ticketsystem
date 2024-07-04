@@ -104,6 +104,18 @@ def custom_login(request):
 def homepage(request):
     return render(request, 'dashboard/homepage.html')
 
+def events_page(request):
+    events = Event.objects.all()
+    query = request.GET.get('q')
+    print(f"Search query: {query}")  
+    if query:
+        events = events.filter(name__icontains=query)
+
+    context = {
+        'events': events
+    }
+    return render(request, 'events_page.html', context)
+
 
 def contact_us(request):
     if request.method == 'POST':

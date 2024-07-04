@@ -17,8 +17,8 @@
             <a href="/"><img src="https://i.ibb.co/stp4Qdk/logoticket.jpg" alt="Ticketopia Logo"></a>
         </div>
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#events">Events</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="{% url 'events_page' %}">Events</a></li> 
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
@@ -144,7 +144,9 @@
             </div>
         </div>
         <!-- Filter Events Button -->
-        <a href="#events" class="filter-button">Filter Events</a>
+      <!-- Filter Events Button -->
+<a href="{% url 'events_page' %}" class="filter-button">Filter Events</a> 
+
     </section>
 
     <!-- Partnership Section -->

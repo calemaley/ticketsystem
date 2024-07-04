@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/login/', event_views.custom_login, name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('', event_views.homepage, name='homepage'),
+    path('events/', event_views.events_page, name='events_page'), 
     path('dashboard/', event_views.dashboard, name='dashboard'),
     path('register/', event_views.register, name='register'),
     path('contact/', event_views.contact_us, name='contact'),
