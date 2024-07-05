@@ -5,7 +5,11 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.homepage, name='homepage'),
+    path('noughty_by_nature/', views.noughty_by_nature_view, name='noughty_by_nature_view'),
+    path('events/<int:event_id>/', views.event_detail, name='event_detail'),  
+    path('event/buy/', views.buy_ticket, name='buy_ticket'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('contact/', views.contact, name='contact'),
     path('dashboard/event-manage/', views.event_manage, name='dashboard-eventmanage'),
     path('dashboard/book-tickets/', views.book_ticket, name='dashboard-bookingtickets'),
     path('dashboard/reviews/', views.review_list, name='dashboard-reviewlist'),

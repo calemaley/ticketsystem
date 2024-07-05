@@ -19,7 +19,8 @@
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
             <li><a href="{% url 'events_page' %}">Events</a></li> 
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+
         </ul>
     </nav>
 
@@ -34,7 +35,8 @@
         <h3>Buy tickets in advance to popular events</h3>
         <div class="events-grid">
             <div class="event-card">
-                <img src="https://i.ibb.co/GT6QyzR/event7.jpg" alt="Event Image">
+                <a href="{% url 'clean_energy_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/GT6QyzR/event7.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>The Clean Energy.</h3>
                     <p>The Clean Energy Conference Australia Africa 2024.</p>
@@ -45,7 +47,8 @@
             </div>
             <!-- Event Card 2 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/4Sh28WM/event1.jpg" alt="Event Image">
+                <a href="{% url 'noughty_by_nature_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/4Sh28WM/event1.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>Noughty By Nature - 2000s Party</h3>
                     <p>Don’t miss out on the event of the year – it’s going to be noughty but oh-so-nice!</p>
@@ -56,7 +59,8 @@
             </div>
             <!-- Event Card 3 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/ByvCycY/event10.jpg" alt="Event Image">
+                <a href="{% url 'africa_festival_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/ByvCycY/event10.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>AFRICA FESTIVAL</h3>
                     <p>FESTAC AFRICA FESTIVAL 2024</p>
@@ -67,7 +71,8 @@
             </div>
             <!-- Event Card 4 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/7SppxWm/event3.jpg" alt="Event Image">
+                <a href="{% url 'music_gala_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/7SppxWm/event3.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>MUSIC Gala Event</h3>
                     <p>ANNUAL ADVENTIST MUSIC AWARDS CONCERT AND MUSIC Gala Event</p>
@@ -78,7 +83,8 @@
             </div>
             <!-- Event Card 5 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/tmFT817/event9.jpg" alt="Event Image">
+                <a href="{% url 'nairobi_kingdom_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/tmFT817/event9.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>Nairobi Kingdom World-Tour</h3>
                     <p>Kingdom Tour 2024 with Maverick City Music and Kirk Franklin is coming to Africa, Europe and Asia.</p>
@@ -89,7 +95,8 @@
             </div>
             <!-- Event Card 6 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/mtknn2S/event8.jpg" alt="Event Image">
+                <a href="{% url 'biking_fest_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/mtknn2S/event8.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>BIKING FEST 2024</h3>
                     <p>HELLS GATE BIKING FEST 2024</p>
@@ -100,7 +107,8 @@
             </div>
             <!-- Event Card 7 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/PrMDXL2/event6.jpg" alt="Event Image">
+                <a href="{% url 'l_boogie_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/PrMDXL2/event6.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>L BOOGIE</h3>
                     <p>L BOOGIE-Nairobis Biggest Old Skool Party.</p>
@@ -111,7 +119,8 @@
             </div>
             <!-- Event Card 8 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/Dr5LT1d/event5.jpg" alt="Event Image">
+                <a href="{% url 'yakeyake_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/Dr5LT1d/event5.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>YAKE YAKE- Festival</h3>
                     <p>A night with the stars</p>
@@ -122,7 +131,8 @@
             </div>
             <!-- Event Card 9 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/RvxQ6h6/event4.jpg" alt="Event Image">
+                <a href="{% url 'nakuru_edition_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/RvxQ6h6/event4.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>NAKURU Edition</h3>
                     <p>The Maze Out of Town</p>
@@ -133,7 +143,8 @@
             </div>
             <!-- Event Card 10 -->
             <div class="event-card">
-                <img src="https://i.ibb.co/8Y4FP2X/event2.jpg" alt="Event Image">
+                <a href="{% url 'sports_tournament_view' %}" class="text-decoration-none">
+                <img src="https://i.ibb.co/8Y4FP2X/event2.jpg" alt="Event Image"></a>
                 <div class="card-content">
                     <h3>Sports Tournament</h3>
                     <p>Head To Head: Motokhana Circuit Racing(KNTC ROUND 3)</p>
