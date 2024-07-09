@@ -135,21 +135,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.your-email-provider.com'  # Example: smtp.gmail.com
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'calemale360@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'nroj roxb hscx ryhe'  # Replace with your password
-
+EMAIL_HOST_USER = 'calemale360@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'your-email-password'
 
 # Crispy forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Daraja settings (for MPesa integration)
-DARAJA_CONSUMER_KEY = 'your_daraja_consumer_key'
-DARAJA_CONSUMER_SECRET = 'your_daraja_consumer_secret'
-DARAJA_SHORTCODE = 'your_shortcode'
-DARAJA_PASSKEY = 'your_passkey'
+MPESA_CONSUMER_KEY = 'uBX1LEJQEgJyTQlBNLpggnCo9wGYcGxdbW73uAOta7jiGVCt'
+MPESA_CONSUMER_SECRET = '1CzvGxmFsvRWNob4HendrgPiEWwKTKPd6kjn4r6hDFGoh4A3LoAiqtINDQWgaz42'
+MPESA_INITIATOR_NAME = 'testapi'
+MPESA_INITIATOR_PASSWORD = 'Safaricom999!*!'
+MPESA_SHORTCODE = '174379'
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+
 
 # Redirect settings
 # settings.py

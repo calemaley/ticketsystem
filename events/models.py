@@ -39,10 +39,20 @@ class Review(models.Model):
     def __str__(self):
         return f"Review for {self.event.name} by {self.user.username}"
 
-class Chat(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    
+class Sales(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    date = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Chat message by {self.user.username}'
+        return f"{self.name} - {self.email}"
+    
+class Chat(models.Model):
+     user = models.ForeignKey(User, on_delete=models.CASCADE)
+     message = models.TextField()
+     timestamp = models.DateTimeField(auto_now_add=True)
+
+

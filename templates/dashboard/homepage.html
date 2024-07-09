@@ -14,12 +14,13 @@
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="/"><img src="https://i.ibb.co/stp4Qdk/logoticket.jpg" alt="Ticketopia Logo"></a>
+            <a href="{% url 'register' %}"><img src="https://i.ibb.co/stp4Qdk/logoticket.jpg" alt="Ticketopia Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
             <li><a href="{% url 'events_page' %}">Events</a></li> 
             <li><a href="{% url 'contact' %}">Contact</a></li>
+            
 
         </ul>
     </nav>

@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for the sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 50px; /* Adjust according to your needs */
+            z-index: 1;
+            overflow-x: hidden;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #ffffff;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #0056b3; /* Change to desired hover color */
+        }
+
+        .main-content {
+            margin-left: 250px; /* Adjust based on sidebar width */
+            padding: 20px;
+        }
+
+        .create-event-btn {
+            background-color: #28a745; /* Green button */
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-right: 20px;
+        }
+
+        .create-event-btn:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        /* Second sidebar at the bottom */
+        .bottom-sidebar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 50px; /* Adjust height as needed */
+            width: 250px;
+            background-color: #343a40;
+            z-index: 1;
+            overflow-x: hidden;
+        }
+
+        .bottom-sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #ffffff;
+            display: block;
+        }
+
+        .bottom-sidebar a:hover {
+            background-color: #0056b3; /* Change to desired hover color */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+        <a href="{% url 'sales' %}" class="{% if 'sales' in request.path %}active{% endif %}">Sales</a>
+        <a href="{% url 'events_page' %}">Events</a>
+        <a href="{% url 'admin_chat_view' %}">Support</a>
+        <a href="/">Notifications</a>
+        <a href="/">Edit</a>
+        <!-- Add more sidebar links as needed -->
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'create_event' %}" class="create-event-btn">Create Event</a>
+        </div>
+
+        <div class="container mt-5">
+            <h1>Dashboard</h1>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Events
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ events.count }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Ticket Purchased
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ sales_data.count }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Users
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ users.count }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional cards for Support, Notifications, and Edit -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Support
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Notifications
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Edit
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add more sections as needed -->
+        </div>
+    </div>
+
+    <!-- Bottom sidebar -->
+    <div class="bottom-sidebar">
+        <a href="/">Back to Home</a>
+        <!-- Add more bottom sidebar links as needed -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

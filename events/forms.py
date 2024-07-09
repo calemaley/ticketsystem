@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from django.contrib.auth.models import User
 from .models import Event, Ticket, Review, Chat, Notification
 
+
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -25,7 +27,8 @@ class ReviewForm(forms.ModelForm):
 class ChatForm(forms.ModelForm):
     class Meta:
         model = Chat
-        fields = '__all__'
+        fields = ['message']
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -37,7 +40,4 @@ class RegistrationForm(UserCreationForm):
 class UserPasswordResetForm(PasswordResetForm):
     email = forms.EmailField()
 
-class ContactForm(forms.Form):
-    name = forms.CharField(max_length=100, required=True)
-    email = forms.EmailField(required=True)
-    message = forms.CharField(widget=forms.Textarea, required=True)
+

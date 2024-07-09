@@ -1,5 +1,6 @@
 # events/views.py
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from .models import Event, Ticket, Review, Chat, Notification
 from .forms import EventForm, TicketForm, ReviewForm, ChatForm, RegistrationForm
@@ -8,7 +9,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .forms import ContactForm
+from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django_daraja.mpesa.core import MpesaClient
 from django.urls import reverse
@@ -16,27 +17,143 @@ from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 import logging
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from .models import Sales, Event
+from .models import Chat
+from .forms import ChatForm
+from django.utils import timezone
 
 
 
+def dashboard(request):
+    # Fetch data for the dashboard
+    events_count = Event.objects.count()  # Example for events count
+    users_count = User.objects.count()    # Example for users count
+    sales_data = Sales.objects.all()       # Example for fetching sales data
+    
+    # Calculate ticket purchases based on sales data
+    ticket_purchases = sales_data.count()  
+    
+    context = {
+        'events_count': events_count,
+        'users_count': users_count,
+        'sales_data': sales_data,
+        'ticket_purchases': ticket_purchases,
+    }
+    return render(request, 'dashboard/dashboard.html', context)
+
+def contact_us(request):
+    if request.method == 'POST':
+        form = ChatForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.user = request.user
+            message.timestamp = timezone.now()
+            message.save()
+            return JsonResponse({
+                'success': True,
+                'user': message.user.username,
+                'message': message.message,
+                'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            })
+    else:
+        form = ChatForm()
+
+    messages = Chat.objects.all().order_by('timestamp')
+    return render(request, 'contact.html', {'messages': messages, 'form': form})
+
+def admin_chat_view(request):
+    if request.method == 'POST':
+        form = ChatForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.user = request.user
+            message.timestamp = timezone.now()
+            message.save()
+            return JsonResponse({
+                'success': True,
+                'user': message.user.username,
+                'message': message.message,
+                'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            })
+    else:
+        form = ChatForm()
+
+    messages = Chat.objects.all().order_by('timestamp')
+    return render(request, 'admin_chat.html', {'messages': messages, 'form': form})
 
 @login_required
-def customer_dashboard(request):
-    available_events = Event.objects.all()
-    purchased_tickets = Ticket.objects.filter(user=request.user)
-    notifications = Notification.objects.filter(user=request.user)
-    return render(request, 'dashboard/customerdashboard.html', {
-        'available_events': available_events,
-        'purchased_tickets': purchased_tickets,
-        'notifications': notifications,
-    })
+def delete_message(request, message_id):
+    message = Chat.objects.get(id=message_id)
+    if request.user == message.recipient or request.user.is_staff:
+        message.delete()
+    return redirect('admin_chat_view' if request.user.is_staff else 'contact_us')
 
-@login_required
+
+
+def create_event_view(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            event = form.save()
+            return redirect('event_detail', event_id=event.id)  # Redirect to event detail page after creation
+    else:
+        form = EventForm()
+    
+    return render(request, 'create_event.html', {'form': form})
+
+def dashboard_view(request):
+    events = Event.objects.all()
+    sales_data = Sales.objects.all()
+    users = User.objects.all()  # Query to fetch all users
+
+    context = {
+        'events': events,
+        'sales_data': sales_data,
+        'users': users,  # Include users count in the context
+    }
+    return render(request, 'events/dashboard.html', context)
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            messages.success(request, 'Registration successful. Please log in.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+def custom_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                if user.is_superuser:
+                    return redirect('dashboard')
+                else:
+                    messages.info(request, 'You do not have permission to access the dashboard.')
+                    return redirect('homepage')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
+
+
 def event_details(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'events/event_details.html', {'event': event})
 
-@login_required
+
 def purchase_ticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
@@ -60,49 +177,9 @@ def purchase_ticket(request, event_id):
         return redirect('customer-dashboard')
     return render(request, 'events/purchase_ticket.html', {'event': event})
 
-@login_required
-def manage_ticket(request, ticket_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
-    if request.method == 'POST' and 'cancel' in request.POST:
-        ticket.delete()
-        return redirect('customer-dashboard')
-    return render(request, 'tickets/manage_ticket.html', {'ticket': ticket})
-
-@login_required
-def submit_review(request):
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.user = request.user
-            review.save()
-            return redirect('customer-dashboard')
-    else:
-        form = ReviewForm()
-    return render(request, 'reviews/submit_review.html', {'form': form})
-
-
 def event_detail(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     return render(request, 'event_detail.html', {'event': event})
-
-def custom_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if user.is_staff:  # Admin user
-                return HttpResponseRedirect(reverse('admin:index'))
-            else:  # Customer user
-                return HttpResponseRedirect(reverse('dashboard'))
-        else:
-            # Invalid login
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
-    else:
-        return render(request, 'login.html')
-    
 
 def homepage(request):
     return render(request, 'dashboard/homepage.html')
@@ -119,18 +196,6 @@ def events_page(request):
     }
     return render(request, 'events_page.html', context)
 
-
-def contact_us(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            # Process the form data here (e.g., send an email)
-            messages.success(request, 'Your message has been sent successfully!')
-            return redirect('contact')  # Redirect to the same contact page
-    else:
-        form = ContactForm()
-    
-    return render(request, 'contact.html', {'form': form})
 
 def index(request):
     event_count = Event.objects.all().count()
@@ -157,105 +222,6 @@ def index(request):
 
 logger = logging.getLogger(__name__)
 
-def event_manage(request):
-    events = Event.objects.all()
-    logger.debug(f"Retrieved events: {events}")
-    if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('dashboard-eventmanage'))
-    else:
-        form = EventForm()
-    return render(request, 'dashboard/event_management.html', {'form': form, 'events': events})
-
-
-def event_delete(request, pk):
-    event = Event.objects.get(id=pk)
-    if request.method == 'POST':
-        event.delete()
-        return redirect('dashboard-eventmanage')
-    context = {
-        'event': event
-    }
-    return render(request, 'dashboard/event_delete.html', context)
-
-def event_update(request, pk):
-    event = Event.objects.get(id=pk)
-    if request.method == "POST":
-        form = EventForm(request.POST, instance=event)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard-eventmanage')
-    else:
-        form = EventForm(instance=event)
-    context = {
-        'form': form,
-    }
-    return render(request, 'dashboard/event_update.html', context)
-
-def book_ticket(request):
-    tickets = Ticket.objects.all()
-    context = {
-        'tickets': tickets,
-    }
-    return render(request, 'dashboard/book_ticket.html', context)
-
-
-def ticket_update(request, pk):
-    ticket = Ticket.objects.get(id=pk)
-    if request.method == "POST":
-        form = TicketForm(request.POST, instance=ticket)
-        if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get('email')
-            email_content = f"Dear Customer, Your ticket for the event has been updated. Thank you for booking with us!"
-            send_mail(
-                'Event Ticket Booking Update',
-                email_content,
-                'youremail@example.com',  # Replace with your email
-                [email],
-            )
-            return redirect('dashboard-bookingtickets')
-    else:
-        form = TicketForm(instance=ticket)
-    context = {
-        'form': form,
-    }
-    return render(request, 'dashboard/ticket_update.html', context)
-
-def ticket_delete(request, pk):
-    ticket = Ticket.objects.get(id=pk)
-    if request.method == 'POST':
-        ticket.delete()
-        return redirect('dashboard-bookingtickets')
-    context = {
-        'ticket': ticket,
-    }
-    return render(request, 'dashboard/ticket_delete.html', context)
-
-def add_review(request):
-    reviews = Review.objects.all()
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard-index')
-    else:
-        form = ReviewForm()
-    context = {
-        'form': form,
-        'reviews': reviews,
-    }
-    return render(request, 'dashboard/add_review.html', context)
-
-def review_list(request):
-    reviews = Review.objects.all()
-    context = {
-        'reviews': reviews,
-    }
-    return render(request, 'dashboard/review_list.html', context)
-
 
 def review_delete(request, pk):
     review = Review.objects.get(id=pk)
@@ -271,57 +237,9 @@ def logout_user(request):
     logout(request)
     return render(request, 'user/logout.html')
 
-def chat_view(request):
-    if request.method == 'POST':
-        form = ChatForm(request.POST)
-        if form.is_valid():
-            chat_message = form.save(commit=False)
-            chat_message.user = request.user
-            chat_message.save()
-    else:
-        form = ChatForm()
-    messages = Chat.objects.all()
-    return render(request, 'chat.html', {'form': form, 'messages': messages})
-
-def admin_chat_view(request):
-    if request.method == 'POST':
-        form = ChatForm(request.POST)
-        if form.is_valid():
-            chat_message = form.save(commit=False)
-            chat_message.user = request.user
-            chat_message.save()
-    else:
-        form = ChatForm()
-    messages = Chat.objects.all()
-    return render(request, 'admin_chat.html', {'form': form, 'messages': messages})
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            if user.is_staff:
-                return redirect('admin-dashboard')
-            else:
-                return redirect('customer-dashboard')
-    else:
-        form = RegistrationForm()
-    return render(request, 'user/register.html', {'form': form})
-
-
-def customer_dashboard(request):
-    return render(request, 'dashboard/customer_dashboard.html')
-
-def admin_dashboard(request):
-    return render(request, 'dashboard/admin_dashboard.html')
-
 
 def contact(request):
     return render(request, 'contact.html')
-
-
-def dashboard(request):
-    return render(request, 'dashboard/dashboard.html')
 
 
 def noughty_by_nature_view(request):
@@ -466,7 +384,7 @@ def food_fest_view(request):
 
 def buy_ticket(request):
     return render(request, 'buy_ticket.html')
-
+@csrf_exempt  # Ensure CSRF exemption for testing purposes
 def payment(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -482,15 +400,49 @@ def payment(request):
         phone_number = str(phone)  # Ensure phone number is a string
         amount = 3000  # Replace with actual amount based on your ticket price logic
         account_reference = 'reference'  # Replace with a unique reference for each transaction
-        transaction_desc = 'Ticket Purchase'  # Replace with a meaningful description
         
-        # URL for callback from Safaricom API after payment
-        callback_url = request.build_absolute_uri(reverse('stk_push_callback'))
+        # Call STK push function from your MpesaClient or equivalent
+        response = cl.stk_push(phone_number, amount, account_reference)
         
+        # Handle response and redirect as needed
+        if response.success:  # Adjust based on your MpesaClient response structure
+            # Payment successful, update your database or process order
+            return render(request, 'payment_success.html', {'message': 'Payment successful!'})
+        else:
+            # Payment failed or other error, handle appropriately
+            return render(request, 'payment_failed.html', {'message': 'Payment failed. Please try again.'})
+    
+    # Handle GET request or invalid requests
+    return HttpResponse('Invalid request')
+
+
+@csrf_exempt
+def process_payment(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        total_amount = request.POST.get('total_amount')  # Ensure you pass this value from the form
+
+        # Implement STK push logic
+        cl = MpesaClient(settings.MPESA_CONSUMER_KEY, settings.MPESA_CONSUMER_SECRET,
+                         settings.MPESA_INITIATOR_NAME, settings.MPESA_INITIATOR_PASSWORD,
+                         settings.MPESA_SHORTCODE, settings.MPESA_PASSKEY)
+
+        amount = int(total_amount)  # Convert to integer (amount in cents)
+        account_reference = 'Ticket Purchase'
+        transaction_desc = 'Payment for event ticket'
+
+        # Use the phone number from the form
+        phone_number = str(phone)
+
+        # Assuming callback URL for payment success/failure handling
+        callback_url = 'https://your-callback-url-for-payment-status'
+
         # Initiate STK push
         response = cl.stk_push(phone_number, amount, account_reference, transaction_desc, callback_url)
-        
-        # Assuming successful payment initiation, send email receipt
+
+        # Send email receipt
         send_mail(
             'Ticket Purchase Receipt',
             'Thank you for purchasing your ticket!',
@@ -498,32 +450,31 @@ def payment(request):
             [email],
             fail_silently=False,
         )
-        
+
         # Redirect to a success page or display a success message
         return render(request, 'payment_success.html', {'name': name, 'phone': phone})
     
     return render(request, 'payment.html')
 
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
-def process_payment(request):
-    # This function handles the actual payment processing logic
-    # Example: Integrating with Safaricom's Daraja API for STK push
-    # Placeholder for demonstration
-    
-    # For demo purposes, just returning a success message
-    return HttpResponse('Payment processed successfully')
 
 @csrf_exempt
 def stk_push_callback(request):
-    # Handle the callback data from Safaricom's API
-    data = request.body  # This will contain the payload sent by Safaricom
-    # Process the callback data as per your integration requirements
-    
-    # Respond with a success message to Safaricom
+    data = request.body.decode('utf-8')
+    # Handle the callback data as needed (update transaction status, send confirmation, etc.)
     return HttpResponse("Payment processed successfully👋")
+
+from django.shortcuts import render
+
+def sales(request):
+    # Replace with actual logic to fetch sales data
+    sales_data = [
+        {'name': 'Jeremiah Samson', 'email': 'jere.sam@gmail.com', 'phone': '+1234567890', 'date': '2024-07-09 15:30', 'success': True},
+        {'name': 'Jane walter', 'email': 'janew@yahoo.com', 'phone': '+1987654321', 'date': '2024-07-08 12:45', 'success': True},
+        # Add more data as needed
+    ]
+    return render(request, 'sales.html', {'sales_data': sales_data})
+
+
 
 
 
