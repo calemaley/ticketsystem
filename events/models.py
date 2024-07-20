@@ -8,14 +8,37 @@ class Event(models.Model):
     description = models.TextField()
     date = models.DateTimeField()
     location = models.CharField(max_length=200)
+    # an event may have multiple marketing images
+    # we need to upload and store images/banners
     image = models.ImageField(upload_to='events/')
-  
+    # specify audience capacity, ticket distribution
+    audienceCapacity = models.IntegerField()
+    # vendors/partners 
 
     def __str__(self):
         return self.name
+    
+    @property
+    def remaining_capacity(self):
+        sold_tickets_count = Ticket.objects.filter(event=self).count()
+        return max(0, self.audienceCapacity - sold_tickets_count)
 
+class TicketType(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)  # Name of the ticket type
+    description = models.TextField()  # Description of the ticket type
+    quantity = models.IntegerField(default=0)  # Total quantity available for this type
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"{self.event.name} - {self.name}"
+
+  
+    # Ticket is generated only after payment is confirmed 
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    # make it optional
+    ticketType = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     seat_number = models.CharField(max_length=10)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
