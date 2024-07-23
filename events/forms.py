@@ -9,11 +9,14 @@ from .models import Event, Ticket, Review, Chat, Notification
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'date', 'location', 'image']
+        fields = ['name', 'description', 'date', 'start_time', 'end_time', 'location', 'manual_location', 'venue_details', 'region', 'location_type', 'image', 'audience_capacity', 'ticket_price']
         widgets = {
-            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'description': forms.Textarea(attrs={'rows': 5}),
         }
-
+        
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket

@@ -6,6 +6,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', event_views.homepage, name='homepage'),
+    path('', event_views.splash_page, name='splash_page'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('events/', event_views.events_page, name='events_page'),
     path('dashboard/', event_views.dashboard, name='dashboard'),

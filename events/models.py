@@ -4,16 +4,29 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Event(models.Model):
+    LOCATION_CHOICES = [
+        ('venue', 'Venue'),
+        ('online', 'Online Event'),
+        ('to_be_announced', 'To be Announced'),
+    ]
+    
     name = models.CharField(max_length=200)
     description = models.TextField()
-    date = models.DateTimeField()
-    location = models.CharField(max_length=200)
+    date = models.DateField()  # Use DateField for just the date
+    start_time = models.TimeField()  # Separate field for start time
+    end_time = models.TimeField()  # Separate field for end time
+    location_type = models.CharField(max_length=50, choices=LOCATION_CHOICES)  # Choices for location type
+    location = models.CharField(max_length=200, blank=True, null=True)  # Venue location (e.g., city or county)
+    manual_location = models.CharField(max_length=200, blank=True, null=True)  # Manual location input
+    venue_details = models.CharField(max_length=200, blank=True, null=True)  # Additional venue details (e.g., apartment/suite)
+    region = models.CharField(max_length=100, blank=True, null=True)  # Region
     image = models.ImageField(upload_to='events/')
-  
+    audience_capacity = models.PositiveIntegerField()
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.name
-
+    
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

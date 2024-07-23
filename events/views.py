@@ -27,6 +27,11 @@ from django.utils import timezone
 
 
 
+
+def splash_page(request):
+    return render(request, 'splash.html')
+
+
 def dashboard(request):
     # Fetch data for the dashboard
     events_count = Event.objects.count()  # Example for events count
@@ -92,16 +97,23 @@ def delete_message(request, message_id):
     return redirect('admin_chat_view' if request.user.is_staff else 'contact_us')
 
 
+logger = logging.getLogger(__name__)
+
 
 def create_event_view(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            event = form.save()
-            return redirect('event_detail', event_id=event.id)  # Redirect to event detail page after creation
+            form.save()
+            logger.info('Event created successfully')
+            messages.success(request, 'Event created successfully!')
+            return redirect('events_page')
+        else:
+            logger.error('Form errors: %s', form.errors)
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = EventForm()
-    
+
     return render(request, 'create_event.html', {'form': form})
 
 def dashboard_view(request):
@@ -463,7 +475,7 @@ def stk_push_callback(request):
     # Handle the callback data as needed (update transaction status, send confirmation, etc.)
     return HttpResponse("Payment processed successfully👋")
 
-from django.shortcuts import render
+
 
 def sales(request):
     # Replace with actual logic to fetch sales data
