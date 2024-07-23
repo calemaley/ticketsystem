@@ -14,5 +14,13 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='user/login.html'), name='login'),
     path('logout/', views.logout_user, name='logout'),
+<<<<<<< HEAD
     
+=======
+    # endpoint for creating event
+    # endpoint for fetching all events
+    # endpoint for fetching singleevnt
+    # endpoint for making ticket payment
+    # endpoint for validating payment
+>>>>>>> origin/main
 ]
