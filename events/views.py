@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.db.models import Count
+from django.db.models.functions import ExtractMonth, ExtractYear
 from .models import Event, Ticket, Review, Chat, Notification
 from .forms import EventForm, TicketForm, ReviewForm, ChatForm, RegistrationForm
 from django.contrib.auth import logout, login
@@ -24,6 +26,9 @@ from .models import Sales, Event
 from .models import Chat
 from .forms import ChatForm
 from django.utils import timezone
+import random
+
+
 
 
 
@@ -475,17 +480,36 @@ def stk_push_callback(request):
     # Handle the callback data as needed (update transaction status, send confirmation, etc.)
     return HttpResponse("Payment processed successfully👋")
 
-
-
 def sales(request):
-    # Replace with actual logic to fetch sales data
-    sales_data = [
-        {'name': 'Jeremiah Samson', 'email': 'jere.sam@gmail.com', 'phone': '+1234567890', 'date': '2024-07-09 15:30', 'success': True},
-        {'name': 'Jane walter', 'email': 'janew@yahoo.com', 'phone': '+1987654321', 'date': '2024-07-08 12:45', 'success': True},
-        # Add more data as needed
-    ]
-    return render(request, 'sales.html', {'sales_data': sales_data})
+    sales_data = Sales.objects.all()
+    
+    if not sales_data.exists():
+        context = {
+            'total_sales': 0,
+            'successful_sales': 0,
+            'failed_sales': 0,
+            'monthly_sales': [],
+        }
+    else:
+        # Aggregating sales per month
+        monthly_sales = sales_data.annotate(
+            month=ExtractMonth('date'),
+            year=ExtractYear('date')
+        ).values('year', 'month').annotate(count=Count('id')).order_by('year', 'month')
 
+        context = {
+            'total_sales': sales_data.count(),
+            'successful_sales': sales_data.filter(success=True).count(),
+            'failed_sales': sales_data.filter(success=False).count(),
+            'monthly_sales': monthly_sales
+        }
+
+    return render(request, 'sales.html', context)
+
+def events_page_view(request):
+    events = Event.objects.all()
+    return render(request, 'events_page.html', {'events': events})
+    
 
 
 
