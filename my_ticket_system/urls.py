@@ -23,7 +23,14 @@ urlpatterns = [
     path('stk_push_callback/', event_views.stk_push_callback, name='stk_push_callback'),
     path('sales/', event_views.sales, name='sales'),
     path('create/', event_views.create_event_view, name='create_event'),
-     path('events/', event_views.events_page_view, name='events_page'),
+    path('events/', event_views.events_page_view, name='events_page'),
+    path('admin/events/update/<int:event_id>/', event_views.update_event_view, name='update_event'),
+    path('admin/events/delete/<int:event_id>/', event_views.delete_event_view, name='delete_event'),
+    path('create_ticket_type', event_views.create_ticket_type_view, name='create_ticket_type'),
+    path('update_ticket_type', event_views.update_ticket_type_view, name='update_ticket_type'),
+    path('ticket_type_list', event_views.ticket_type_list, name='ticket_type_list'),
+    path('delete_ticket_type', event_views.delete_ticket_type_view, name='delete_ticket_type'),   
+
     
 
     # Event-specific views

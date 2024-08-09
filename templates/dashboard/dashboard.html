@@ -85,10 +85,9 @@
         <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
         <a href="{% url 'sales' %}" class="{% if 'sales' in request.path %}active{% endif %}">Sales</a>
         <a href="{% url 'events_page' %}">Events</a>
+        <a href="{% url 'create_ticket_type' %}">Create Ticket Types</a>
+        <a href="{% url 'ticket_type_list' %}">Ticket Type List</a>
         <a href="{% url 'admin_chat_view' %}">Support</a>
-        <a href="/">Notifications</a>
-        <a href="/">Edit</a>
-        <!-- Add more sidebar links as needed -->
     </div>
 
     <div class="main-content">

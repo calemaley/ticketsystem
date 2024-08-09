@@ -36,7 +36,7 @@ class TicketType(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
-    quantity = models.IntegerField(default=0)
+    quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
@@ -44,13 +44,14 @@ class TicketType(models.Model):
 
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    ticketType = models.ForeignKey(TicketType, on_delete=models.CASCADE, null=True, blank=True)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    seat_number = models.CharField(max_length=10)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    seat_number = models.CharField(max_length=10, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.event.name} - {self.seat_number}"
+        return f"{self.event.name} - {self.ticket_type.name} - {self.seat_number if self.seat_number else 'General'}"
+
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.db.models import Count
 from django.db.models.functions import ExtractMonth, ExtractYear
 from .models import Event, Ticket, Review, Chat, Notification
-from .forms import EventForm, TicketForm, ReviewForm, ChatForm, RegistrationForm
+from .forms import EventForm, TicketForm, ReviewForm, ChatForm, RegistrationForm, TicketTypeForm, TicketType
 from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.http import HttpResponse
@@ -53,6 +53,16 @@ def dashboard(request):
         'ticket_purchases': ticket_purchases,
     }
     return render(request, 'dashboard/dashboard.html', context)
+
+
+# def ticket_list(request):
+#     tickets = Ticket.objects.filter(user=request.user)
+#     return render(request, 'ticket_list.html', {'tickets': tickets})
+
+# @login_required
+# def ticket_detail(request, ticket_id):
+#     ticket = get_object_or_404(Ticket, id=ticket_id)
+#     return render(request, 'ticket_detail.html', {'ticket': ticket})
 
 def contact_us(request):
     if request.method == 'POST':
@@ -120,6 +130,88 @@ def create_event_view(request):
         form = EventForm()
 
     return render(request, 'create_event.html', {'form': form})
+
+
+def event_list(request):
+    events = Event.objects.all()
+    return render(request, 'events_page.html', {'events': events})
+
+
+def update_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            form.save()
+            logger.info('Event updated successfully')
+            messages.success(request, 'Event updated successfully!')
+            return redirect('event_list')
+        else:
+            logger.error('Form errors: %s', form.errors)
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = EventForm(instance=event)
+
+    return render(request, 'update_event.html', {'form': form})
+
+@login_required
+def delete_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    event.delete()
+    logger.info('Event deleted successfully')
+    messages.success(request, 'Event deleted successfully!')
+    return redirect('events_page')
+
+
+def create_ticket_type_view(request):
+    if request.method == 'POST':
+        form = TicketTypeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            logger.info('Ticket type created successfully')
+            messages.success(request, 'Ticket type created successfully!')
+            return redirect('ticket_type_list')
+        else:
+            logger.error('Form errors: %s', form.errors)
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = TicketTypeForm()
+
+    return render(request, 'create_ticket_type.html', {'form': form})
+
+
+def update_ticket_type_view(request, ticket_type_id):
+    ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
+    if request.method == 'POST':
+        form = TicketTypeForm(request.POST, instance=ticket_type)
+        if form.is_valid():
+            form.save()
+            logger.info('Ticket type updated successfully')
+            messages.success(request, 'Ticket type updated successfully!')
+            return redirect('ticket_type_list')
+        else:
+            logger.error('Form errors: %s', form.errors)
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = TicketTypeForm(instance=ticket_type)
+
+    return render(request, 'update_ticket_type.html', {'form': form})
+
+@login_required
+def delete_ticket_type_view(request, ticket_type_id):
+    ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
+    ticket_type.delete()
+    logger.info('Ticket type deleted successfully')
+    messages.success(request, 'Ticket type deleted successfully!')
+    return redirect('ticket_type_list')
+
+@login_required
+def ticket_type_list(request):
+    ticket_types = TicketType.objects.all()
+    return render(request, 'ticket_type_list.html', {'ticket_types': ticket_types})
+
+
+
 
 def dashboard_view(request):
     events = Event.objects.all()
