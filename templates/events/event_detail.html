@@ -1,0 +1,92 @@
+{% extends 'partials/base.html'%}
+{% load static %}
+{% block title %}Home page{% endblock %}
+
+{% block content %}
+<header>
+ 
+
+  
+  
+   
+  </header>
+  
+  <!-- content -->
+  <section class="py-5 mt-4">
+    <div class="container">
+      <div class="row gx-5">
+        <aside class="col-lg-6">
+          <div class="border rounded-4 mb-3 d-flex justify-content-center">
+            <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
+              <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit mt-4" src="{{item.image.url}}" />
+            </a>
+          </div>
+        </aside>
+        <main class="col-lg-6 mt-5">
+          <div class="ps-lg-3">
+            <h4 class="title text-dark">
+              {{item.name}}
+            </h4>
+            <div class="d-flex flex-row my-3">
+              <div class="text-warning mb-1 me-2">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span class="ms-1">
+                  4.5
+                </span>
+              </div>
+              <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+              <span class="text-success ms-2">In stock</span>
+            </div>
+  
+            <div class="mb-3">
+              <span class="h5">$75.00</span>
+              <span class="text-muted">/per box</span>
+            </div>
+  
+            <p>
+             {{item.description}}
+            </p>
+  
+            <div class="row">
+              <dt class="col-3">Location</dt>
+              <dd class="col-9">{{item.location}}, {{item.region}}</dd>
+
+              <dt class="col-3">Venue</dt>
+              <dd class="col-9">{{item.venue_details}}</dd>
+  
+              <dt class="col-3">Time</dt>
+              <dd class="col-9">{{item.start_time}} - {{item.end_time}}</dd>
+  
+              <dt class="col-3">Date</dt>
+              <dd class="col-9">{{item.date}}</dd>
+  
+              
+            </div>
+  
+            <hr />
+  
+            <div class="row mb-4">
+              <div class="col-md-9 col-6 mb-3">
+                <h2>Tickets</h2>
+                      <ul>
+                          {% for ticket in tickets %}
+                              <li>
+                                  <dd><b>Ticket Type:</b> {{ ticket.ticket_type }} <b>Price:</b> KSH{{ ticket.ticket_price }}<b> Available Amount: </b>{{ ticket.amount }}</dd>
+                              </li>
+                          {% endfor %}
+                      </ul>
+              </div>
+            </div>
+            <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+  <!-- content -->
+ 
+  {% endblock %}

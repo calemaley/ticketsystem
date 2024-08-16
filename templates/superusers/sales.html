@@ -1,0 +1,30 @@
+{% extends 'partials/base.html'%}
+{% load static%}
+{% block title %}Home page{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+
+<body class="sb-nav-fixed">
+{% include 'includes/admin_sidebar.html' %}
+
+
+<div class="container my-5">
+    <table style=" border-bottom-right-radius: 20px;box-shadow: 12px 12px 20px 6px #2e6da4;" class="table bg-white table-hover">
+        <thead class="bg-secondary">
+         <tr class="text-white">
+            <th scope="col">Invoice number</th>
+            <th scope="col">Name of purchaser</th>
+            <th scope="col">Date</th>
+            <th scope="col">Ticket type</th>
+            <th scope="col">Ticket price</th>
+          </tr>
+        </thead>
+        <tbody>
+           
+        </tbody>
+      </table>
+</div>
+
+
+{% endblock %}

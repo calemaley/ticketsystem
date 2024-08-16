@@ -1,0 +1,40 @@
+.carousel-item{ 
+    height:95vh; 
+    /* background-image:  */
+    /* top, transparent red */
+    /* linear-gradient(
+      rgba(0, 0, 0, 0.45), 
+      rgba(0, 0, 0, 0.45)
+    ),
+    url(../images/carsel3.jpg); */
+    background-repeat: no-repeat; 
+    background-position: center;
+    background-size: cover; 
+    background-position: center;
+    background-size: cover;
+} 
+a {
+  text-decoration: none;
+}
+
+.carousel-text {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    /* width: 100%; */
+    height: auto;  /* Adjust height as needed */
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    color: white;
+    text-align: center;
+    transform: translate(-50%, -50%); /* Center the content within the slide */
+  }
+
+  .icon-hover:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+    color: #3b71ca !important;
+  }
+  
+  .icon-hover:hover i {
+    color: #3b71ca !important;
+  }

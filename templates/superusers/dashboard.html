@@ -1,0 +1,9 @@
+{% extends 'partials/base.html'%}
+{% load static %}
+{% block content %}
+{% if user.is_authenticated and user.is_staff and user.is_superuser%}
+{% include 'superusers/admin_dashboard.html'%}
+{% else %}
+{% include 'superusers/organizer_dashboard.html' %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'partials/base.html'%}
+{% load static%}
+{% load crispy_forms_tags %}
+{% block title %}Create tickets{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+
+<body class="sb-nav-fixed">
+{% include 'includes/sidebar.html' %}
+
+
+    <div class="container mt-5">
+        <div class="row mt-3">
+            <div class="col-md-6 offset-md-3">
+                <div class="border bg-white p-3">
+                    <h3>Create Ticket</h3>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input class="btn btn-success mt-3" type="submit" value="Add event">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

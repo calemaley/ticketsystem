@@ -1,0 +1,80 @@
+{% extends 'partials/base.html'%}
+{% load static%}
+{% block title %}Home page{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div id="myCarousel" class="carousel slide" data-bs-ride="carousel" data-interval="3000">
+  <ol class="carousel-indicators">
+    <li data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></li>
+    <li data-bs-target="#myCarousel" data-bs-slide-to="1"></li>
+    <li data-bs-target="#myCarousel" data-bs-slide-to="2"></li>
+  </ol>
+
+  <div class="carousel-inner">
+
+    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel1.jpeg);" class="carousel-item active">
+      <div class="carousel-text"> 
+        <h1 class="advert-text">Booking tickets has never been easier</h1>
+        </div>
+      <!-- <img class="d-block w-100 h-100" src="images/carsel3.jpg" alt="Image 1"> -->
+    </div>
+
+    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel2.jpeg);" class="carousel-item">
+      <div class="carousel-text"> 
+        <h1 class="advert-text">Don't be left behind. Explore our various events</h1>
+      </div>
+      <!-- <img class="d-block w-100 h-100" src="images/carsel4.jpg" alt="Image 2"> -->
+    </div>
+
+    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel3.jpeg);" class="carousel-item item1">
+      <div class="carousel-text">
+        <h1 class="advert-text">Book tickets at the comfort of your home</h1>
+        </div>
+      <!-- <img class="d-block w-100 h-100" src="images/carsel5.jpg" alt="Image 3"> -->
+    </div>
+
+    </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+    
+    
+    <div class="container">
+        <div class="row">
+            <!-- Replace with actual data from your database -->
+            {% for event in events %}
+                <div class="col-md-3 mt-4">
+                    <div class="card h-100 m-3 ml-2 shadow rounded mt-3">
+                      {% comment %} <a class="img-wrap" href=""> {% endcomment %}
+                        <img src="{{ event.image.url }}" class="h-50" alt="{{ event.name }}">
+                      {% comment %} </a> {% endcomment %}
+                        <div class="card-body">
+                           <a href="{% url 'event-detail' event.id %}"><h5 class="card-title">{{ event.name }}</h5></a>
+                            <p class="card-text">{{ event.location }}, {{event.venue_details}}</p>
+                            <a href="{% url 'event-detail' event.id %}" class="btn btn-primary">View event</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+         </div>
+    </div>
+
+
+
+      
+
+    
+
+
+{% endblock %}
