@@ -1,15 +1,102 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Event, Ticket
+from .models import Event, Ticket, Sales, Ticket
 from .forms import EventForm, TicketForm
 from django.contrib.auth import logout
 from django.contrib import messages
-
+from django.utils import timezone
+import matplotlib.pyplot as plt
+import io
+import urllib, base64
+import requests
+from django.conf import settings
+from django.core.mail import send_mail
+from .forms import ContactForm
 # Create your views here.
-def event(request):
-    events = Event.objects.all()
+
+
+def home(request):
+    # Get filter parameters from the request
+    location_filter = request.GET.get('location')
+    date_filter = request.GET.get('date')
+    
+    # Base query for upcoming events
+    upcoming_events = Event.objects.filter(
+        upcoming_events=True,
+        date__gte=timezone.now()
+    ).order_by('date')
+    
+    # Apply filters if provided
+    if location_filter:
+        upcoming_events = upcoming_events.filter(location=location_filter)
+    if date_filter:
+        upcoming_events = upcoming_events.filter(date=date_filter)
+    
+    # Featured events (unfiltered)
+    featured_events = Event.objects.filter(
+        is_featured=True,
+        date__gte=timezone.now()
+    ).order_by('date')
+
+    # Giveaway events (unfiltered)
+    giveaway_events = Event.objects.filter(
+        giveaway=True,
+        date__gte=timezone.now()
+    ).order_by('date')
+    
     context = {
-        'events':events
+        'upcoming_events': upcoming_events,
+        'featured_events': featured_events,
+        'giveaway_events': giveaway_events,  
+        'location_filter': location_filter,
+        'date_filter': date_filter,
     }
+    
+    return render(request, 'events/home.html', context)
+
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+
+            # Send email
+            subject = f"New contact message from {first_name} {last_name}"
+            message_body = f"Message from {first_name} {last_name} <{email}>:\n\n{message}"
+            send_mail(subject, message_body, 'calemale360@gmail.com', ['calemale360@gmail.com'])
+
+            messages.success(request, 'Your message has been sent successfully.')
+            return redirect('contact')
+    else:
+        form = ContactForm()
+
+    return render(request, 'events/contact.html', {'form': form})
+
+
+def event(request):
+    search_query = request.GET.get('search', '')
+    event_type_filter = request.GET.get('event_type', '')
+
+    events = Event.objects.all()
+
+    if search_query:
+        events = events.filter(name__icontains=search_query)
+    
+    if event_type_filter:
+        events = events.filter(event_type=event_type_filter)
+
+    event_types = Event.objects.values('event_type').distinct()
+
+    context = {
+        'events': events,
+        'event_types': event_types,
+        'event_type_filter': event_type_filter,
+        'search_query': search_query,
+    }
+
     return render(request, 'events/events.html', context)
 
 #code for viewing each event in detail
@@ -147,3 +234,24 @@ def logout_user(request):
     logout(request)
     redirect('event-page')
     return render(request,'users/logout.html')
+
+
+
+def sales_analysis(request):
+    sales_data = Sales.objects.all()
+
+    # Generate chart
+    fig, ax = plt.subplots()
+    ax.bar([sale.event.name for sale in sales_data], [sale.total_sales for sale in sales_data])
+    ax.set_xlabel('Events')
+    ax.set_ylabel('Total Sales')
+    ax.set_title('Sales Analysis')
+
+    # Convert chart to base64 for embedding in HTML
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
+
+    return render(request, 'superusers/sales.html', {'chart': image_base64})

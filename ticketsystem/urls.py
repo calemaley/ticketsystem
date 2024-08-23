@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users import views as user_view
+from users import views as user_views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from events import views
@@ -27,6 +28,8 @@ urlpatterns = [
     path('',include('events.urls')),
     path('register/', user_view.register, name='user-register'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name = 'user-login'),
+    path('reset_password/', user_views.reset_password, name="reset_password"),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('logout/',views.logout_user,name='logout'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
      
