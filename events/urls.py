@@ -13,6 +13,9 @@ urlpatterns = [
     path('eventupdate/<int:pk>/', views.event_update, name="event-update"),
     path('eventdelete/<int:pk>/', views.event_delete, name="event-delete"),
     path('contact/', views.contact, name='contact'),
+    path('featured/', views.featured_events, name='featured-events'),
+    path('upcoming/', views.upcoming_events, name='upcoming-events'),
+    path('giveaway/', views.giveaway_events, name='giveaway-events'),
   
     #tickets urls
     path('createtickets/',views.create_ticket, name='create-ticket'),

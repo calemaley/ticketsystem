@@ -255,3 +255,18 @@ def sales_analysis(request):
     buffer.close()
 
     return render(request, 'superusers/sales.html', {'chart': image_base64})
+
+def featured_events(request):
+    # Filter events based on the 'is_featured' field
+    events = Event.objects.filter(is_featured=True, date__gte=timezone.now()).order_by('date')
+    return render(request, 'events/featured_events.html', {'events': events})
+
+def upcoming_events(request):
+    # Filter events based on the 'upcoming_events' field
+    events = Event.objects.filter(upcoming_events=True, date__gte=timezone.now()).order_by('date')
+    return render(request, 'events/upcoming_events.html', {'events': events})
+
+def giveaway_events(request):
+    # Filter events based on the 'giveaway' field
+    events = Event.objects.filter(giveaway=True, date__gte=timezone.now()).order_by('date')
+    return render(request, 'events/giveaway_events.html', {'events': events})

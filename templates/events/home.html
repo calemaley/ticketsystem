@@ -50,9 +50,14 @@
 
     
 
+
 <div class="container mt-5">
   <!-- Featured Events -->
-  <h2 class="text-center mb-4">Featured Events</h2>
+  <h2 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(255,0,150,1) 0%, rgba(255,0,0,1) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(255,0,150,0.6), 0 0 20px rgba(255,0,150,0.6); font-weight: bold;">Featured Events
+    <a href="{% url 'featured-events' %}" class="btn btn-link" style="float: right; color: rgba(255,0,150,1);">
+        View All <i class="fas fa-arrow-right"></i>
+    </a>
+  </h2>
   <div class="row">
       {% if featured_events %}
           {% for event in featured_events %}
@@ -80,7 +85,11 @@
 
   <!-- Upcoming Events -->
   <div class="mt-5">
-      <h2 class="text-center mb-4">Upcoming Events</h2>
+    <h2 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(0,255,255,1) 0%, rgba(0,0,255,1) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0,255,255,0.6), 0 0 20px rgba(0,255,255,0.6); font-weight: bold;">
+        Upcoming Events
+        <a href="{% url 'upcoming-events' %}" class="btn btn-link" style="float: right; color: rgba(0,255,255,1);">
+            View All <i class="fas fa-arrow-right"></i></h2>
+        <div class="row">
       <div class="row">
           {% if upcoming_events %}
               {% for event in upcoming_events %}
@@ -109,7 +118,12 @@
 
   <!-- Giveaway Events -->
   <div class="mt-5">
-      <h2 class="text-center mb-4">Giveaway</h2>
+    <h2 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(0,255,0,1) 0%, rgba(0,128,0,1) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0,255,0,0.6), 0 0 20px rgba(0,255,0,0.6); font-weight: bold;">
+        Giveaway
+        <a href="{% url 'giveaway-events' %}" class="btn btn-link" style="float: right; color: rgba(0,255,0,1);">
+            View All <i class="fas fa-arrow-right"></i>
+        </a>
+    </h2>
       <div class="row">
           {% if giveaway_events %}
               {% for event in giveaway_events %}
@@ -137,7 +151,7 @@
   </div>
 </div>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Partnerships</h2>
+    <h2 class="text-center mb-4" style="color: black; text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.8); font-weight: bold;">Partnerships</h2>
     <div class="row">
         <!-- Partnership 1 -->
         <div class="col-md-2 col-sm-4 mb-4 text-center">
