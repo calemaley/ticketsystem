@@ -104,6 +104,7 @@ class Event(models.Model):
     upcoming_events = models.BooleanField(default=False)
     giveaway = models.BooleanField(default=False)
     event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, default='')
+    price = models.DecimalField(max_digits=10, decimal_places=2) 
 
     def __str__(self):
         return self.name

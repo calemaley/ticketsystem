@@ -37,6 +37,8 @@
                         </a>
                         <p class="card-text text-muted">{{ event.location }}, {{ event.venue_details }}</p>
                         <p class="card-text text-muted">Type: {{ event.get_event_type_display }}</p>
+                        <!-- Add the price paragraph here -->
+                        <p class="text-danger">Price: KSH {{ event.price }}</p>
                         <a href="{% url 'event-detail' event.id %}" class="btn btn-primary">View Event</a>
                     </div>
                 </div>

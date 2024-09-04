@@ -15,43 +15,68 @@ from .forms import ContactForm
 
 
 def home(request):
-    # Get filter parameters from the request
+    # Get search and filter parameters from the request
+    search_query = request.GET.get('search', '')
     location_filter = request.GET.get('location')
     date_filter = request.GET.get('date')
     
-    # Base query for upcoming events
+    # Base query for each event type
     upcoming_events = Event.objects.filter(
         upcoming_events=True,
         date__gte=timezone.now()
     ).order_by('date')
-    
-    # Apply filters if provided
-    if location_filter:
-        upcoming_events = upcoming_events.filter(location=location_filter)
-    if date_filter:
-        upcoming_events = upcoming_events.filter(date=date_filter)
-    
-    # Featured events (unfiltered)
+
     featured_events = Event.objects.filter(
         is_featured=True,
         date__gte=timezone.now()
     ).order_by('date')
 
-    # Giveaway events (unfiltered)
     giveaway_events = Event.objects.filter(
         giveaway=True,
         date__gte=timezone.now()
     ).order_by('date')
     
+    # Apply filters and search to each query set
+    if search_query:
+        upcoming_events = upcoming_events.filter(name__icontains=search_query)
+        featured_events = featured_events.filter(name__icontains=search_query)
+        giveaway_events = giveaway_events.filter(name__icontains=search_query)
+
+    if location_filter:
+        upcoming_events = upcoming_events.filter(location=location_filter)
+        featured_events = featured_events.filter(location=location_filter)
+        giveaway_events = giveaway_events.filter(location=location_filter)
+
+    if date_filter:
+        upcoming_events = upcoming_events.filter(date=date_filter)
+        featured_events = featured_events.filter(date=date_filter)
+        giveaway_events = giveaway_events.filter(date=date_filter)
+    
     context = {
         'upcoming_events': upcoming_events,
         'featured_events': featured_events,
         'giveaway_events': giveaway_events,  
+        'search_query': search_query,
         'location_filter': location_filter,
         'date_filter': date_filter,
     }
     
     return render(request, 'events/home.html', context)
+
+def search_events(request):
+    query = request.GET.get('search')
+    location = request.GET.get('location')
+    
+    events = Event.objects.all()
+    
+    if query:
+        events = events.filter(name__icontains=query)
+    
+    if location:
+        events = events.filter(location__icontains=location)
+    
+    # Passing only the filtered events to the template
+    return render(request, 'events/search_results.html', {'events': events})
 
 
 def contact(request):

@@ -1,10 +1,8 @@
 {% extends 'partials/base.html'%}
-{% load static%}
+{% load static %}
 {% block title %}Home page{% endblock %}
 
 {% block content %}
-
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 <div id="myCarousel" class="carousel slide" data-bs-ride="carousel" data-interval="3000">
   <ol class="carousel-indicators">
@@ -15,28 +13,71 @@
 
   <div class="carousel-inner">
 
-    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel1.jpeg);" class="carousel-item active">
-      <div class="carousel-text"> 
-        <h1 class="advert-text">Booking tickets has never been easier</h1>
-        </div>
-      <!-- <img class="d-block w-100 h-100" src="images/carsel3.jpg" alt="Image 1"> -->
-    </div>
+    <!-- First Carousel Item -->
+    <div style="background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(media/events/carousel1.jpeg);" class="carousel-item active">
+      <div class="carousel-text text-center">
+        <h1 class="advert-text mb-4">Booking tickets has never been easier</h1>
+        
+        <div class="bg-light p-4 rounded mx-auto" style="max-width: 400px; opacity: 0.9;">
+            <form action="{% url 'search_events' %}" method="get">
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Event name..." name="search">
+              </div>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="City" name="location">
+              </div>
+              <button type="submit" class="btn btn-danger btn-block">Find Your Event</button>
+            </form>
+            <p class="mt-3 mb-0 text-danger">Book an event with free cancellation</p>
 
-    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel2.jpeg);" class="carousel-item">
-      <div class="carousel-text"> 
-        <h1 class="advert-text">Don't be left behind. Explore our various events</h1>
+          </div>
+        </div>
       </div>
-      <!-- <img class="d-block w-100 h-100" src="images/carsel4.jpg" alt="Image 2"> -->
-    </div>
 
-    <div style="background-image:linear-gradient( rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(media/events/carousel3.jpeg);" class="carousel-item item1">
-      <div class="carousel-text">
-        <h1 class="advert-text">Book tickets at the comfort of your home</h1>
+    <!-- Second Carousel Item -->
+    <div style="background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(media/events/carousel2.jpeg);" class="carousel-item">
+      <div class="carousel-text text-center">
+        <h1 class="advert-text mb-4">Don't be left behind. Explore our various events</h1>
+        <div class="bg-light p-4 rounded mx-auto" style="max-width: 400px; opacity: 0.9;">
+            <form action="{% url 'search_events' %}" method="get">
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Event name..." name="search">
+              </div>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="City" name="location">
+              </div>
+              <button type="submit" class="btn btn-danger btn-block">Find Your Event</button>
+            </form>
+            <p class="mt-3 mb-0 text-danger">Book an event with free cancellation</p>
+
+          </div>
         </div>
-      <!-- <img class="d-block w-100 h-100" src="images/carsel5.jpg" alt="Image 3"> -->
-    </div>
+      </div>
 
-    </div>
+    <!-- Third Carousel Item -->
+    <div style="background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(media/events/carousel3.jpeg);" class="carousel-item">
+      <div class="carousel-text text-center">
+        <h1 class="advert-text mb-4">Book tickets at the comfort of your home</h1>
+        
+        <!-- Search Form -->
+        <div class="bg-light p-4 rounded mx-auto" style="max-width: 400px; opacity: 0.9;">
+            <form action="{% url 'search_events' %}" method="get">
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Event name..." name="search">
+              </div>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="City" name="location">
+              </div>
+            
+              <button type="submit" class="btn btn-danger btn-block">Find Your Event</button>
+            </form>
+            <p class="mt-3 mb-0 text-danger">Book an event with free cancellation</p>
+
+          </div>
+        </div>
+      </div>
+
+  </div>
 
   <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,6 +88,10 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+
+
+
+
 
     
 

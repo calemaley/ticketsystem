@@ -12,6 +12,12 @@
                             <h5 class="card-title text-primary">{{ type.event_type|title }}</h5>
                         </a>
                         <p class="card-text text-muted">Click to view all {{ type.event_type|title }} events.</p>
+                        <!-- Assuming you have an average_price field or similar -->
+                        {% if type.average_price %}
+                            <p class="card-text text-danger">Average Price: KSH {{ type.average_price }}</p>
+                        {% else %}
+                            <p class="card-text text-muted">No price information available.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

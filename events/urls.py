@@ -6,6 +6,7 @@ urlpatterns = [
     path('eventpage/', views.event, name='event-page'),
     path('events/type/<str:event_type>/', views.event, name='events-by-type'),
     path('eventdetail/<int:pk>/',views.event_detail, name="event-detail"),
+    path('search/', views.search_events, name='search_events'),
     path('dashboard/',views.dashboard, name='dashboard'),
     path('admindashboard/', views.admin_dashboard, name="admin"),
     path('eventlist/',views.event_list, name='event-list'),
@@ -16,6 +17,7 @@ urlpatterns = [
     path('featured/', views.featured_events, name='featured-events'),
     path('upcoming/', views.upcoming_events, name='upcoming-events'),
     path('giveaway/', views.giveaway_events, name='giveaway-events'),
+    
   
     #tickets urls
     path('createtickets/',views.create_ticket, name='create-ticket'),
