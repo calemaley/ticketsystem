@@ -1,0 +1,27 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4" style="color: #007bff; font-weight: bold;">Enter Phone Number </h2>
+
+
+    {% if messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            <strong>{{ message }}</strong>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    
+    <form action="{% url 'enter_phone_number' ticket.id %}" method="POST" class="shadow-lg p-4 bg-white rounded" style="max-width: 600px; margin: 0 auto;">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="phone_number" class="form-label" style="font-size: 1.2rem; font-weight: bold;">Phone Number</label>
+            <input type="text" name="phone_number" class="form-control" value="{{ user_profile.phone_number|default_if_none:'' }}" placeholder="Enter your phone number" style="padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 2px solid #007bff;">
+        </div>
+        <button type="submit" class="btn btn-primary w-100" style="padding: 10px 0; font-size: 1.2rem; font-weight: bold; border-radius: 8px; background-color: #007bff; border: none;">Submit Phone Number</button>
+    </form>
+</div>
+{% endblock %}

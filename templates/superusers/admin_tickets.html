@@ -10,37 +10,40 @@
 
     <div class="container my-5">
         <!-- Display messages if available -->
-        {% for message in messages %}
-            {% if message %}
+        {% if messages %}
+        <div class="container">
+            {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <!-- Tickets table -->
-        <table class="table table-hover table-bordered table-striped shadow" style="border-radius: 12px;">
-            <thead class="bg-primary text-white">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Event</th>
-                    <th scope="col">Ticket Price</th>
-                    <th scope="col">Ticket Type</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">PDF</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% regroup tickets by ticket.ticket_type as ticket_type_list %}
-                {% for group in ticket_type_list %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped shadow-sm" style="border-radius: 12px;">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Event</th>
+                        <th scope="col">Ticket Price</th>
+                        <th scope="col">Ticket Type</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">PDF</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% regroup tickets by ticket.ticket_type as ticket_type_list %}
+                    {% for group in ticket_type_list %}
                     <tr>
                         <td colspan="7" class="bg-secondary text-white text-center">{{ group.grouper }}</td>
                     </tr>
                     {% for ticket in group.list %}
                     <!-- Make the row clickable -->
-                    <tr onclick="window.location='{% url 'ticket-update' ticket.id %}'" style="cursor: pointer;">
+                    <tr class="table-row" onclick="window.location='{% url 'ticket-update' ticket.id %}'" style="cursor: pointer; transition: background-color 0.3s ease;">
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ ticket.event.name }}</td>
                         <td>KSH {{ ticket.ticket_price }}</td>
@@ -55,22 +58,46 @@
                         </td>
                         <td>
                             <!-- Action buttons for update and delete -->
-                            <a href="{% url 'ticket-update' ticket.id %}" class="btn btn-info btn-sm me-2">Update</a>
-                            <a href="{% url 'ticket-delete' ticket.id %}" class="btn btn-danger btn-sm me-2">Delete</a>
-                            
-                            <!-- Send to SMS Button, only appears if PDF is generated -->
-                            {% if ticket.ticket_pdf %}
-                            <form action="{% url 'send_ticket_via_sms' ticket.id %}" method="POST" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary btn-sm">Send via SMS</button>
-                            </form>
-                            {% endif %}
+                            <div class="d-flex">
+                                <a href="{% url 'ticket-update' ticket.id %}" class="btn btn-info btn-sm me-2">Update</a>
+                                <a href="{% url 'ticket-delete' ticket.id %}" class="btn btn-danger btn-sm me-2">Delete</a>
+                                
+                                <!-- Send to SMS Button, only appears if PDF is generated -->
+                                {% if ticket.ticket_pdf %}
+                                <form action="{% url 'enter_phone_number' ticket.id %}" method="GET" class="d-inline">
+                                    <button type="submit" class="btn btn-primary btn-sm" 
+                                        style="background-color: #007bff; 
+                                               border: none; 
+                                               padding: 6px 12px; 
+                                               font-weight: bold;
+                                               border-radius: 5px;
+                                               text-shadow: 0 1px 1px rgba(0,0,0,0.1); 
+                                               box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
+                                               transition: all 0.3s ease;">
+                                        <i class="fas fa-paper-plane me-1"></i>Send SMS
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
+
+<script>
+    // Add hover effect for table row
+    document.querySelectorAll('.table-row').forEach(function(row) {
+        row.addEventListener('mouseover', function() {
+            this.style.backgroundColor = '#f1f1f1';
+        });
+        row.addEventListener('mouseout', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+</script>
 {% endblock %}

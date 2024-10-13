@@ -3,7 +3,7 @@ from .models import Event, Ticket
 from django.contrib.admin import widgets
 from .models import  Sales
 from .models import ContactMessage, Review
-from .models import User 
+from .models import Profile  
 
 class EventForm(forms.ModelForm):
 
@@ -51,13 +51,8 @@ class ReviewForm(forms.ModelForm):
         
 class PhoneNumberForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['phone_number']  # Add any other fields you want to include in the form
+        model = Profile  # Use the Profile model, not the User model
+        fields = ['phone_number']  # Specify the phone_number field in the Profile model
         widgets = {
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'})
         }
-
-    def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
-        # Add phone number validation logic if needed
-        return phone_number

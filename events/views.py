@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Event, Ticket, Sales, Ticket
-from .forms import EventForm, TicketForm, SalesForm, BookingForm, ReviewForm
+from .models import Event, Ticket, Sales, Ticket, Profile
+from .forms import EventForm, TicketForm, SalesForm, BookingForm, ReviewForm, PhoneNumberForm
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils import timezone
@@ -678,28 +678,102 @@ def payment_callback(request):
     return JsonResponse({"message": "Only POST requests allowed"}, status=405)
 
 
+
 def send_ticket_via_sms(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+    
+    # Check if the user already has a profile, if not create one
+    user_profile, created = Profile.objects.get_or_create(user=ticket.user)
+    
+    # Ensure the user has a valid phone number
+    if not user_profile.phone_number:
+        messages.error(request, "No phone number found. Please provide a valid phone number.")
+        return redirect('enter_phone_number', ticket_id=ticket.id)
 
-    # Check if ticket PDF and user's phone number exist
-    if ticket.ticket_pdf and ticket.user.phone_number:
-        sms_api_url = "https://api.smsprovider.com/send_sms"  # Example URL for your SMS API
-        sms_api_key = settings.SMS_API_KEY  # Your API key stored in settings
+    # Proceed to send the SMS if the PDF is available
+    if ticket.ticket_pdf:
+        sms_api_url = "https://api2.tiaraconnect.io/api/messaging/sendsms"
+        bearer_token = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0MDYiLCJvaWQiOjQwNiwidWlkIjoiZGE4M2M0M2ItYjhhNC00NTBkLThiYzktMmY2YmEwMzhlMjEyIiwiYXBpZCI6MzIzLCJpYXQiOjE3MTg5OTcyNDAsImV4cCI6MjA1ODk5NzI0MH0.FREAPyL9ZZhy-Wo7rV6q3bu-2Kv657xp48NxJTmBkug1SzpgSDKAfH5vu7VGYjuT_F_97nWwaL65q5-Pst83ww"  
 
-        message = f"Dear {ticket.user.first_name}, here is the link to your ticket for {ticket.event.name}: {request.build_absolute_uri(ticket.ticket_pdf.url)}"
+        # Message to send
+        message = f"Hey {ticket.user.first_name}! 🎉 Your golden ticket to {ticket.event.name} is hot off the press and waiting just for you! Ready to rock? Grab it here: {request.build_absolute_uri(ticket.ticket_pdf.url)}. Don’t keep the fun waiting, champ – see you there!"
 
-        # Send SMS using requests or any SMS provider
-        response = requests.post(sms_api_url, data={
-            'api_key': sms_api_key,
-            'to': ticket.user.phone_number,
-            'message': message
-        })
 
+        # Prepare the payload
+        payload = {
+            'from': 'TECHVOYAGE',
+            'to': user_profile.phone_number,
+            'message': message,
+            'refId': '09wiwu088xu'
+        }
+
+        headers = {
+            'Authorization': bearer_token,
+            'Content-Type': 'application/json',
+        }
+        
+        response = requests.post(sms_api_url, json=payload, headers=headers)
+
+        # Check if the SMS was sent successfully
         if response.status_code == 200:
-            messages.success(request, f"Ticket has been sent via SMS to {ticket.user.phone_number}.")
+            messages.success(request, f"Ticket has been successfully sent to {user_profile.phone_number} via SMS.")
         else:
             messages.error(request, "Failed to send the SMS. Please try again.")
     else:
-        messages.error(request, "Ticket PDF not available or phone number missing.")
+        messages.error(request, "Ticket PDF not available.")
 
-    return redirect('admin_tickets')  # Redirect back to the tickets page
+    return redirect('admin-tickets')  # Redirect back to the tickets page
+
+def enter_phone_number(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    
+    # Check if the user already has a profile and create one if not
+    user_profile, created = Profile.objects.get_or_create(user=ticket.user)
+    
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone_number')
+        if phone_number:
+            # Save the phone number in the user's profile
+            user_profile.phone_number = phone_number
+            user_profile.save()
+
+            # Redirect to the view that sends the SMS
+            return redirect('send_ticket_via_sms', ticket_id=ticket.id)
+
+    return render(request, 'events/enter_phone_number.html', {'ticket': ticket, 'user_profile': user_profile})
+
+def otp_page(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone_number')
+        custom_message = request.POST.get('custom_message')
+
+        if phone_number and custom_message:
+            # Use the phone number and message to send an OTP
+            sms_api_url = "https://api2.tiaraconnect.io/api/messaging/sendsms"
+            bearer_token = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0MDYiLCJvaWQiOjQwNiwidWlkIjoiZGE4M2M0M2ItYjhhNC00NTBkLThiYzktMmY2YmEwMzhlMjEyIiwiYXBpZCI6MzIzLCJpYXQiOjE3MTg5OTcyNDAsImV4cCI6MjA1ODk5NzI0MH0.FREAPyL9ZZhy-Wo7rV6q3bu-2Kv657xp48NxJTmBkug1SzpgSDKAfH5vu7VGYjuT_F_97nWwaL65q5-Pst83ww"  
+
+            # Prepare the payload for sending the OTP via SMS
+            payload = {
+                'from': 'TECHVOYAGE',
+                'to': phone_number,
+                'message': custom_message,
+                'refId': '09wiwu088xu'
+            }
+
+            headers = {
+                'Authorization': bearer_token,
+                'Content-Type': 'application/json',
+            }
+            
+            response = requests.post(sms_api_url, json=payload, headers=headers)
+
+            # Check if the SMS was sent successfully
+            if response.status_code == 200:
+                messages.success(request, f"OTP has been successfully sent to {phone_number}.")
+            else:
+                messages.error(request, "Failed to send the OTP. Please try again.")
+
+        else:
+            messages.error(request, "Please provide both phone number and message.")
+
+    return render(request, 'superusers/otp_page.html')

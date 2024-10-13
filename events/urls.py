@@ -30,6 +30,7 @@ urlpatterns = [
     path('generate-ticket-pdf/<int:ticket_id>/', views.generate_ticket_pdf, name='generate-ticket-pdf'),
     path('payment/callback/', views.payment_callback, name='payment_callback'),
     path('send-ticket-via-sms/<int:ticket_id>/', views.send_ticket_via_sms, name='send_ticket_via_sms'),
+    path('enter-phone-number/<int:ticket_id>/', views.enter_phone_number, name='enter_phone_number'),
     
 
     
@@ -49,6 +50,7 @@ urlpatterns = [
     path('admintickets/',views.admin_tickets, name='admin-tickets'),
     path('dashboard/event/<int:id>/', views.admin_event_detail, name='admin-event-detail'),
     path('sales/', views.sales_analysis, name='sales'),
+    path('otp/', views.otp_page, name='otp_page'),
 
 
    

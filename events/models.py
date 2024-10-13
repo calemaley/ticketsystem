@@ -4,6 +4,8 @@ import datetime
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # County choices for location
 county_choice = ( 
@@ -173,4 +175,17 @@ class Review(models.Model):
     def __str__(self):
         return f"Review for {self.event.name} by {self.user.username}"
     
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
+# Ensure the signal to create or update the profile is present
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
 
