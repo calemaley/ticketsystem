@@ -2,30 +2,48 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block title %}Login Page{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'style/style.css' %}">
-<div class="container">
-    <div class="row mt-5">
-        <div class="col-md-6 offset-md-3 mt-5">
-            {% for message in messages %}
-            {% if message %}
-            <div class="alert alert-{{message.tags }}">
-                {{message}}
-            </div>
-            {% endif %}
-            {% endfor %}
-            <div class="border p-3 bg-white">
-                <h3>Login</h3>
-                <hr>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <input class="btn btn-success mt-4" type="submit" value="Login">
-                </form>
-                <div class="mt-3">
-                    <a href="{% url 'reset_password' %}" class="text-muted">Forgot password?</a>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6">
+        <!-- Card with shadow and rounded corners -->
+        <div class="shadow-lg p-5" style="background-color: #f5f7fa; border-radius: 15px; position: relative;">
+            
+            <!-- Floating round emojis at the corners for fun effect -->
+            <span style="position: absolute; top: -20px; left: -20px; font-size: 40px;">🔐</span>
+            <span style="position: absolute; top: -20px; right: -20px; font-size: 40px;">🎟️</span>
+            <span style="position: absolute; bottom: -20px; left: -20px; font-size: 40px;">🚪</span>
+            <span style="position: absolute; bottom: -20px; right: -20px; font-size: 40px;">💻</span>
+            
+            <h3 class="text-center mb-4" style="color: #007bff; font-weight: 700;">Welcome Back!</h3>
+            
+            <!-- Subtext for welcome -->
+            <p class="text-center text-muted mb-4">🔑 Log in to access your exclusive tickets and events 🎫</p>
+            
+            <!-- Login Form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Crispy Form rendering with custom spacing -->
+                <div class="form-group mb-4">
+                    {{ form.username|as_crispy_field }}
                 </div>
-            </div>
+                <div class="form-group mb-4">
+                    {{ form.password|as_crispy_field }}
+                </div>
+                
+                <!-- Custom Login Button -->
+                <button class="btn w-100" type="submit" style="background-color: #007bff; color: #fff; padding: 12px 0; border-radius: 25px; font-size: 1.1rem; font-weight: 600; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+                    🚀 Log In
+                </button>
+            </form>
+        </div>
+
+        <!-- Forgot password link at the bottom -->
+        <div class="text-center mt-3">
+            <p class="text-muted">Forgot your password? 
+                <a href="{% url 'reset_password' %}" style="color: #007bff; font-weight: 600;">Reset it here 🔧</a>
+            </p>
         </div>
     </div>
 </div>

@@ -4,33 +4,37 @@
 {% block content %}
 <div class="container mt-5">
     <!-- Upcoming Events -->
-    <h2 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(0,150,255,1) 0%, rgba(0,0,255,1) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0,150,255,0.6), 0 0 20px rgba(0,150,255,0.6); font-weight: bold; margin-top: 50px;">
+    <h2 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(0,150,255,1) 0%, rgba(0,0,255,1) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0,150,255,0.6), 0 0 20px rgba(0,150,255,0.6); font-weight: bold;">
         Upcoming Events
     </h2>
     <div class="row">
         {% if events %}
             {% for event in events %}
-                <div class="col-md-3 mb-4"> <!-- Ensure proper spacing between columns -->
-                    <div class="card h-100 shadow rounded">
+                <div class="col-md-4 col-sm-6 mb-4"> <!-- Adjust column to fit 3 per row -->
+                    <div class="card h-100 shadow-sm rounded" style="border: none;">
                         {% if event.image %}
-                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}">
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" style="height: 350px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
                         {% else %}
-                            <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top" alt="Default Image">
+                            <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top" alt="Default Image" style="height: 350px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
                         {% endif %}
-                        <div class="card-body">
+                        <div class="card-body" style="background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(0,150,255,0.3));">
                             <a href="{% url 'event-detail' event.id %}">
                                 <h5 class="card-title">{{ event.name }}</h5>
                             </a>
-                            <p class="card-text">{{ event.location }}, {{ event.venue_details }}</p>
-                            <a href="{% url 'event-detail' event.id %}" class="btn btn-primary">View Event</a>
+                            <p class="card-text text-muted">
+                                <i class="fas fa-map-marker-alt text-danger"></i> {{ event.location }}, {{ event.venue_details }}<br>
+                                <i class="fas fa-calendar-alt text-warning"></i> {{ event.date|date:"D, d M Y" }}
+                            </p>
+                            <p class="text-danger font-weight-bold">Starting KES {{ event.price }}</p>
+                            <a href="{% url 'event-detail' event.id %}" class="btn btn-primary w-100">View Event</a>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <p class="col-12">No upcoming events available.</p>
+                <p class="col-12 text-center">No upcoming events available.</p>
             {% endfor %}
         {% else %}
-            <p class="col-12">No upcoming events available.</p>
+            <p class="col-12 text-center">No upcoming events available.</p>
         {% endif %}
     </div>
 </div>

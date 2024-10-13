@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'tempus_dominus',
+    'django_daraja',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +136,7 @@ STATICFILES_DIRS = [
  ]
 
 
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = (BASE_DIR/ 'media') # the media files allow the picture for the profile to be displayed it specifies where the media file should be and the route to reach it.
 MEDIA_URL = '/media/'
 
@@ -160,7 +161,20 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True # Set to True if using port 465
 EMAIL_HOST_USER = 'calemale360@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'adzr dyem zhno zyvf'  # Replace with your password
+EMAIL_HOST_PASSWORD = 'uvhbrvrwhsynurjz'  # Replace with your password
+DEFAULT_FROM_EMAIL = 'calemale360@gmail.com'
+
+
+
+# M-Pesa settings for sandbox environment
+MPESA_ENVIRONMENT = 'sandbox'  # Change to 'production' for live use
+MPESA_CONSUMER_KEY = 'cxydwAHDJPletCXRcZ2cCoGA01yWMu5vYkGwA3sDdJk7cNq6'
+MPESA_CONSUMER_SECRET = '889S1xLKS0tyy1q6nMcTqacTQcUjpU6g6WgU60pKvAKWBoR2yGFQCyroNlGwte2p'
+DARAJA_SHORTCODE = '174379'
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+MPESA_EXPRESS_SHORTCODE = '174379'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

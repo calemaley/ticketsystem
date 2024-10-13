@@ -1,94 +1,236 @@
-{% extends 'partials/base.html'%}
+{% extends 'partials/base.html' %}
 {% load static %}
-{% block title %}Home page{% endblock %}
+{% block title %}Event Details{% endblock %}
 
 {% block content %}
-<header>
- 
-
-  
-  
-   
-  </header>
-  
-  <!-- content -->
-  <section class="py-5 mt-4">
-    <div class="container">
-      <div class="row gx-5">
-        <aside class="col-lg-6">
-          <div class="border rounded-4 mb-3 d-flex justify-content-center">
-            <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
-              <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit mt-4" src="{{item.image.url}}" />
-            </a>
-          </div>
-        </aside>
-        <main class="col-lg-6 mt-5">
-          <div class="ps-lg-3">
-            <h4 class="title text-dark">
-              {{item.name}}
-            </h4>
-            <div class="d-flex flex-row my-3">
-              <div class="text-warning mb-1 me-2">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span class="ms-1">
-                  4.5
-                </span>
-              </div>
-              <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
-              <span class="text-success ms-2">In stock</span>
+<div class="container py-5 mt-4">
+    <!-- Display success/error messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-  
-            <div class="mb-3">
-              <span class="h5">$75.00</span>
-              <span class="text-muted">/per box</span>
-            </div>
-  
-            <p>
-             {{item.description}}
-            </p>
-  
-            <div class="row">
-              <dt class="col-3">Location</dt>
-              <dd class="col-9">{{item.location}}, {{item.region}}</dd>
-
-              <dt class="col-3">Venue</dt>
-              <dd class="col-9">{{item.venue_details}}</dd>
-  
-              <dt class="col-3">Time</dt>
-              <dd class="col-9">{{item.start_time}} - {{item.end_time}}</dd>
-  
-              <dt class="col-3">Date</dt>
-              <dd class="col-9">{{item.date}}</dd>
-  
-              
-            </div>
-  
-            <hr />
-  
-            <div class="row mb-4">
-              <div class="col-md-9 col-6 mb-3">
-                <h2>Tickets</h2>
-                      <ul>
-                          {% for ticket in tickets %}
-                              <li>
-                                  <dd><b>Ticket Type:</b> {{ ticket.ticket_type }} <b>Price:</b> KSH{{ ticket.ticket_price }}<b> Available Amount: </b>{{ ticket.amount }}</dd>
-                              </li>
-                          {% endfor %}
-                      </ul>
-              </div>
-            </div>
-            <a href="#" class="btn btn-warning shadow-0">Buy Now</a>
-
-
-          </div>
-        </main>
-      </div>
+        {% endfor %}
     </div>
-  </section>
-  <!-- content -->
- 
-  {% endblock %}
+    {% endif %}
+
+    <!-- Display form errors -->
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li>{{ field.label }}: {{ field.errors }}</li>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="row mb-5">
+        <!-- Event Banner Image -->
+        <div class="col-md-6">
+            <img src="{{ item.image.url }}" style="width: 100%; height: 500px; object-fit: cover;" alt="{{ item.name }}">
+        </div>
+
+        <!-- Event Title and Details -->
+        <div class="col-md-6">
+            <h1 class="display-4 font-weight-bold">{{ item.name }}</h1>
+            <ul class="list-unstyled" style="font-size: 1.2rem;">
+                <li><i class="fas fa-map-marker-alt text-danger"></i> <strong>Location:</strong> {{ item.location }}</li>
+                <li><i class="fas fa-building text-primary"></i> <strong>Venue:</strong> {{ item.venue_details }}</li>
+                <li><i class="fas fa-calendar text-success"></i> <strong>Date:</strong> {{ item.date }}</li>
+                <li><i class="fas fa-clock text-warning"></i> <strong>Time:</strong> {{ item.start_time }} - {{ item.end_time }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Ticket Booking Section -->
+    <div class="container mt-4">
+        <h2>Get Your Tickets to {{ item.name }}</h2>
+        <p class="text-muted">Please choose your ticket type and quantity.</p>
+
+        <form method="POST" action="{% url 'book_tickets' item.id %}">
+            {% csrf_token %}
+
+            <!-- Hidden inputs to store ticket quantities -->
+            <input type="hidden" id="vip_ticket_qty" name="vip_ticket_qty" value="0">
+            <input type="hidden" id="vvip_ticket_qty" name="vvip_ticket_qty" value="0">
+            <input type="hidden" id="early_bird_ticket_qty" name="early_bird_ticket_qty" value="0">
+            <input type="hidden" id="regular_ticket_qty" name="regular_ticket_qty" value="0">
+
+            <div class="row mb-3">
+                <!-- Ticket Type Dropdown -->
+                <div class="col-md-4">
+                    <label for="ticket_type">Ticket Type</label>
+                    <select id="ticket_type" name="ticket_type" class="form-control">
+                        {% if vip_ticket %}
+                            <option value="vip" data-price="{{ vip_ticket.ticket_price }}">VIP - KES {{ vip_ticket.ticket_price }}</option>
+                        {% endif %}
+                        {% if vvip_ticket %}
+                            <option value="vvip" data-price="{{ vvip_ticket.ticket_price }}">VVIP - KES {{ vvip_ticket.ticket_price }}</option>
+                        {% endif %}
+                        {% if early_bird_ticket %}
+                            <option value="early_bird" data-price="{{ early_bird_ticket.ticket_price }}">Early Bird - KES {{ early_bird_ticket.ticket_price }}</option>
+                        {% endif %}
+                        {% if regular_ticket %}
+                            <option value="regular" data-price="{{ regular_ticket.ticket_price }}">Regular - KES {{ regular_ticket.ticket_price }}</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <!-- Quantity Section -->
+                <div class="col-md-2">
+                    <label for="ticket_qty">Quantity</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-outline-secondary" id="decrease_qty">-</button>
+                        <input type="number" id="ticket_qty" name="ticket_qty" class="form-control text-center" value="1" min="1">
+                        <button type="button" class="btn btn-outline-secondary" id="increase_qty">+</button>
+                    </div>
+                </div>
+
+                <!-- Add Ticket Button -->
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button type="button" id="add_ticket" class="btn btn-primary w-100">Add Ticket</button>
+                </div>
+            </div>
+
+            <!-- Display Added Tickets -->
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ticket Type</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticket_summary">
+                            <!-- Ticket details will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="row mt-3">
+                <div class="col-md-12 text-right">
+                    <h4>Total: KES <span id="total_amount">0</span></h4>
+                </div>
+            </div>
+
+            <!-- User Details Section -->
+            <div class="container mt-5">
+                <h3 class="mb-4">Enter Your Details</h3>
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Accept Terms Section -->
+            <div class="container mt-5">
+                <div class="form-group">
+                    <input type="checkbox" id="agree_terms" name="agree_terms" required>
+                    <label for="agree_terms">I agree to the <a href="#">terms and conditions</a></label>
+                </div>
+            </div>
+
+            <!-- Confirm and Submit -->
+            <div class="mt-4">
+                <button type="submit" class="btn btn-danger">Confirm & Buy Tickets</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Google Maps Section -->
+    <div class="container mt-5">
+        <h3>Location</h3>
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6710.23634155566!2d36.8121066230273!3d-1.2920652477852928!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x183f173477b86a77%3A0xf936b5e531be9f3a!2sNairobi%2C+Kenya!5e0!3m2!1sen!2sus!4v1631662298827!5m2!1sen!2sus"
+            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ticketTypeSelect = document.getElementById('ticket_type');
+        const ticketQtyInput = document.getElementById('ticket_qty');
+        const addTicketBtn = document.getElementById('add_ticket');
+        const ticketSummary = document.getElementById('ticket_summary');
+        const totalAmountEl = document.getElementById('total_amount');
+
+        // Hidden inputs for ticket quantities
+        const vipTicketQty = document.getElementById('vip_ticket_qty');
+        const vvipTicketQty = document.getElementById('vvip_ticket_qty');
+        const earlyBirdTicketQty = document.getElementById('early_bird_ticket_qty');
+        const regularTicketQty = document.getElementById('regular_ticket_qty');
+
+        let totalAmount = 0;
+
+        // Increase quantity
+        document.getElementById('increase_qty').addEventListener('click', function() {
+            ticketQtyInput.value = parseInt(ticketQtyInput.value) + 1;
+        });
+
+        // Decrease quantity
+        document.getElementById('decrease_qty').addEventListener('click', function() {
+            if (parseInt(ticketQtyInput.value) > 1) {
+                ticketQtyInput.value = parseInt(ticketQtyInput.value) - 1;
+            }
+        });
+
+        // Add ticket to the summary and update quantities
+        addTicketBtn.addEventListener('click', function() {
+            const ticketType = ticketTypeSelect.options[ticketTypeSelect.selectedIndex].text;
+            const ticketQty = parseInt(ticketQtyInput.value);
+            const ticketPrice = parseFloat(ticketTypeSelect.options[ticketTypeSelect.selectedIndex].getAttribute('data-price'));
+            const ticketTypeValue = ticketTypeSelect.value;
+
+            if (ticketQty > 0 && ticketPrice) {
+                const ticketAmount = ticketQty * ticketPrice;
+                totalAmount += ticketAmount;
+
+                // Add the ticket to the summary table
+                const row = `
+                    <tr>
+                        <td>${ticketType}</td>
+                        <td>${ticketQty}</td>
+                        <td>KES ${ticketAmount.toFixed(2)}</td>
+                    </tr>
+                `;
+                ticketSummary.insertAdjacentHTML('beforeend', row);
+
+                // Update hidden fields for quantities
+                if (ticketTypeValue === 'vip') {
+                    vipTicketQty.value = parseInt(vipTicketQty.value) + ticketQty;
+                } else if (ticketTypeValue === 'vvip') {
+                    vvipTicketQty.value = parseInt(vvipTicketQty.value) + ticketQty;
+                } else if (ticketTypeValue === 'early_bird') {
+                    earlyBirdTicketQty.value = parseInt(earlyBirdTicketQty.value) + ticketQty;
+                } else if (ticketTypeValue === 'regular') {
+                    regularTicketQty.value = parseInt(regularTicketQty.value) + ticketQty;
+                }
+
+                // Update total amount
+                totalAmountEl.textContent = totalAmount.toFixed(2);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,52 +1,54 @@
-{% extends 'partials/base.html'%}
-{% load static%}
-{% block title %}Home page{% endblock %}
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Admin Event Management{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
 
 <body class="sb-nav-fixed">
-{% include 'includes/admin_sidebar.html' %}
+    {% include 'includes/admin_sidebar.html' %}
 
-
-<div class="container my-5">
-  {% for message in messages %}
+    <div class="container my-5">
+        {% for message in messages %}
             {% if message %}
-            <div class="alert alert-{{message.tags }}">
-                {{message}}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
             </div>
             {% endif %}
-   {% endfor %}
-    <table style=" border-bottom-right-radius: 20px;box-shadow: 12px 12px 20px 6px #2e6da4;" class="table bg-white table-hover">
-        <thead class="bg-secondary">
-         <tr class="text-white">
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Date</th>
-            <th scope="col">Start time</th>
-            <th scope="col">Location</th>
-            <th scope="col">Venue</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for event_item in event_items %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{event_item.name}}</td>
-            <td>{{event_item.date}}</td>
-            <td>{{event_item.start_time}}
-            <td>{{event_item.location}}</td>
-            <td>{{event_item.venue_details}}</td>
-            <td>
-                <a href="{% url 'event-update' event_item.id %}" class="btn btn-info">Update</a>
-                <a href="{% url 'event-delete' event_item.id %}" class="btn btn-danger">Delete</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-</div>
-
-
+        {% endfor %}
+        
+        <table style="border-bottom-right-radius: 20px; box-shadow: 12px 12px 20px 6px #2e6da4;" class="table bg-white table-hover">
+            <thead class="bg-secondary">
+                <tr class="text-white">
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Start time</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Venue</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event_item in event_items %}
+                <tr style="cursor: pointer;" onclick="window.location.href='{% url 'admin-event-detail' event_item.id %}'">
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ event_item.name }}</td>
+                    <td>{{ event_item.date }}</td>
+                    <td>{{ event_item.start_time }}</td>
+                    <td>{{ event_item.location }}</td>
+                    <td>{{ event_item.venue_details }}</td>
+                    <td>
+                        <!-- Action buttons -->
+                        <div class="d-flex">
+                            <a href="{% url 'event-update' event_item.id %}" class="btn btn-info me-2">Update</a>
+                            <a href="{% url 'event-delete' event_item.id %}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
 {% endblock %}

@@ -1,38 +1,68 @@
 {% extends 'partials/base.html'%}
-{% load static%}
-{% block title %}Home page{% endblock %}
+{% load static %}
+{% block title %}Event Organizer Dashboard{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
 
 <body class="sb-nav-fixed">
-{% include 'includes/sidebar.html' %}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Event Organiser Dashboard</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-    <div class="row">
-        <div class="col-xl-6 col-md-6">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">Events</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'event-list'%}">View Details</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+    {% include 'includes/sidebar.html' %}
+   
+    <div class="container-fluid py-5" style="background-color: #f8f9fa;">
+        <h1 class="text-center mb-4" style="font-weight: 700; font-size: 2.5rem; color: #007bff;">🎉 Event Organizer Dashboard</h1>
+        <ol class="breadcrumb mb-4 justify-content-center bg-light py-3 px-4 rounded">
+            <li class="breadcrumb-item active" style="font-weight: bold; font-size: 1.1rem;">Dashboard Overview</li>
+        </ol>
+
+       
+        <div class="row text-center justify-content-center">
+            <!-- Events Card -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow-lg h-100 py-2" style="border-radius: 12px; background-color: #007bff; color: white;">
+                    <div class="card-body">
+                        <div class="card-title" style="font-size: 1.5rem; font-weight: 600;">📅 Events</div>
+                        <p class="card-text">Manage all your events in one place!</p>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.1);">
+                        <a class="text-white stretched-link" href="{% url 'event-list' %}" style="font-weight: 600;">View Details</a>
+                        <i class="fas fa-arrow-right text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+          
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow-lg h-100 py-2" style="border-radius: 12px; background-color: #ffc107; color: white;">
+                    <div class="card-body">
+                        <div class="card-title" style="font-size: 1.5rem; font-weight: 600;">🎟️ Tickets</div>
+                        <p class="card-text">Monitor and manage all tickets for your events!</p>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between" style="background-color: rgba(255,255,255,0.1);">
+                        <a class="text-white stretched-link" href="{% url 'ticket-list' %}" style="font-weight: 600;">View Details</a>
+                        <i class="fas fa-arrow-right text-white"></i>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-6 col-md-6">
-            <div class="card bg-warning text-white mb-4">
-                <div class="card-body">Tickets</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'ticket-list' %}">View Details</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+
+        
+        <div class="card mt-5 shadow-lg" style="border-radius: 15px; background-color: #ffffff; color: #343a40;">
+            <div class="card-body p-5">
+                <h3 class="text-center" style="color: #007bff; font-weight: bold;">👋 Welcome, Event Organizer!</h3>
+                <p class="lead text-center mt-3">
+                    You are in control of all the event operations here. From managing ticket sales to tracking attendees, everything is at your fingertips. 
+                </p>
+                <p class="text-center">
+                    Need to create a new event or make changes to an existing one? Explore the options and let your events shine! Remember, success is in the details – every guest, every ticket, and every event matters!
+                </p>
+                <p class="text-center mb-4" style="font-size: 1.2rem; font-weight: bold;">
+                    "The secret to getting ahead is getting started." – Mark Twain
+                </p>
+                <div class="text-center">
+                    <a href="{% url 'create-event' %}" class="btn btn-success px-5 py-3" style="border-radius: 50px; font-size: 1.2rem; font-weight: 600;">🎉 Create a New Event</a>
                 </div>
             </div>
         </div>
     </div>
-    
-</div>
-</main>
+</body>
 {% endblock %}

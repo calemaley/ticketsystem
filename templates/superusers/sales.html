@@ -1,30 +1,145 @@
-{% extends 'partials/base.html'%}
-{% load static%}
-{% block title %}Home page{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-<body class="sb-nav-fixed">
-{% include 'includes/admin_sidebar.html' %}
+<body style="background-color: #f8f9fa; padding: 20px;">
 
+    <div class="container">
+        <h1 class="text-center mb-4" style="color: #343a40;">Sales Dashboard</h1>
 
-<div class="container my-5">
-    <table style=" border-bottom-right-radius: 20px;box-shadow: 12px 12px 20px 6px #2e6da4;" class="table bg-white table-hover">
-        <thead class="bg-secondary">
-         <tr class="text-white">
-            <th scope="col">Invoice number</th>
-            <th scope="col">Name of purchaser</th>
-            <th scope="col">Date</th>
-            <th scope="col">Ticket type</th>
-            <th scope="col">Ticket price</th>
-          </tr>
-        </thead>
-        <tbody>
-           
-        </tbody>
-      </table>
-</div>
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Total Sales</div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 2rem;">${{ total_sales }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Total Events</div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 2rem;">{{ total_events }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Total Tickets Sold</div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 2rem;">{{ total_tickets_sold }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Highest Sale Event</div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 1.5rem;">{{ highest_sale_event }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Sales Trend Over Time Chart -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Sales Trend Over Time</h5>
+                        <canvas id="salesTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-{% endblock %}
+        <!-- Sales Breakdown by Event Table -->
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="text-center mb-4">Sales Breakdown by Event</h4>
+                <table class="table table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Date</th>
+                            <th>Tickets Sold</th>
+                            <th>Total Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if sales_data %}
+                        {% for sale in sales_data %}
+                        <tr>
+                            <td>{{ sale.event__name }}</td>
+                            <td>{{ sale.sale_date }}</td>
+                            <td>{{ sale.tickets_sold }}</td>
+                            <td>${{ sale.total_sales }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">No sales data available.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Script to handle the trend chart -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Extract sales data from Django context
+            const salesData = JSON.parse('{{ sales_data|safe|escapejs }}');
+
+            const labels = salesData.map(sale => sale.event__name);
+            const totalSalesData = salesData.map(sale => sale.total_sales);
+
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: totalSalesData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

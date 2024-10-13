@@ -1,0 +1,29 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Edit Ticket PDF{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>Edit PDF for {{ ticket.event.name }}</h2>
+
+    <!-- Download the current PDF -->
+    {% if ticket.ticket_pdf %}
+    <p>
+        <a href="{{ ticket.ticket_pdf.url }}" class="btn btn-primary" target="_blank">Download Current PDF</a>
+    </p>
+    {% endif %}
+
+    <!-- Upload new/edited PDF -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="ticket_pdf">Upload Edited PDF</label>
+            <input type="file" name="ticket_pdf" class="form-control" accept="application/pdf">
+        </div>
+
+        <button type="submit" class="btn btn-success">Upload Edited PDF</button>
+        <a href="{% url 'tickets_with_pdf' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Admin Event Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4" style="font-weight: bold; font-size: 2.5rem;">{{ event.name }} - Admin View</h1>
+
+    <div class="row">
+        <!-- Event Image Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm" style="border-radius: 15px;">
+                <img src="{{ event.image.url }}" class="card-img-top img-fluid" alt="{{ event.name }}" style="border-radius: 15px 15px 0 0;">
+            </div>
+        </div>
+
+        <!-- Event Details Section -->
+        <div class="col-md-6">
+            <ul class="list-group list-group-flush" style="border-radius: 15px;">
+                <li class="list-group-item" style="background-color: #f7f7f7;"><strong>Date:</strong> {{ event.date }}</li>
+                <li class="list-group-item" style="background-color: #f7f7f7;"><strong>Start Time:</strong> {{ event.start_time }}</li>
+                <li class="list-group-item" style="background-color: #f7f7f7;"><strong>Location:</strong> {{ event.location }}</li>
+                <li class="list-group-item" style="background-color: #f7f7f7;"><strong>Venue Details:</strong> {{ event.venue_details }}</li>
+                <li class="list-group-item" style="background-color: #f7f7f7;"><strong>Available Tickets:</strong> {{ event.available_tickets }}</li>
+                <li class="list-group-item" style="background-color: #f7f7f7;">
+                    <strong>Description:</strong>
+                    <div class="mt-2">{{ event.description|safe }}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Buttons for Update and Delete -->
+    <div class="mt-5 text-center">
+        <a href="{% url 'event-update' event.id %}" class="btn btn-primary btn-lg me-2" style="padding: 10px 30px;">Update Event</a>
+        <a href="{% url 'event-delete' event.id %}" class="btn btn-danger btn-lg" style="padding: 10px 30px;">Delete Event</a>
+    </div>
+</div>
+{% endblock %}

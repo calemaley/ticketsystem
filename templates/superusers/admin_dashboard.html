@@ -1,47 +1,117 @@
-{% extends 'partials/base.html'%}
-{% load static%}
+{% extends 'partials/base.html' %}
+{% load static %}
 {% block title %}Home page{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
 
-<body class="sb-nav-fixed">
-{% include 'includes/admin_sidebar.html' %}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Admin Dashboard</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-    <div class="row">
-        <div class="col-xl-6 col-md-6">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">Events</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'admin-events'%}">View Details</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+<body class="sb-nav-fixed" style="background-color: #f8f9fa;">
+    {% include 'includes/admin_sidebar.html' %}
+
+    <!-- Display success/error messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container-fluid px-4">
+        <h1 class="mt-4 text-primary">Admin Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active" style="color: #6c757d;">Dashboard Overview</li>
+        </ol>
+
+        <div class="row">
+            <!-- Events Card -->
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-primary text-white mb-4 shadow-lg" style="border-radius: 10px;">
+                    <div class="card-body d-flex align-items-center justify-content-between" style="font-size: 1.5rem; font-weight: bold;">
+                        <i class="fas fa-calendar-alt" style="font-size: 2rem;"></i>
+                        <span>Events</span>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="{% url 'admin-events' %}" style="font-weight: 500;">View Details</a>
+                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Card -->
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-warning text-white mb-4 shadow-lg" style="border-radius: 10px;">
+                    <div class="card-body d-flex align-items-center justify-content-between" style="font-size: 1.5rem; font-weight: bold;">
+                        <i class="fas fa-ticket-alt" style="font-size: 2rem;"></i>
+                        <span>Tickets</span>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="{% url 'admin-tickets' %}" style="font-weight: 500;">View Details</a>
+                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Card -->
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-danger text-white mb-4 shadow-lg" style="border-radius: 10px;">
+                    <div class="card-body d-flex align-items-center justify-content-between" style="font-size: 1.5rem; font-weight: bold;">
+                        <i class="fas fa-chart-line" style="font-size: 2rem;"></i>
+                        <span>Sales</span>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="{% url 'sales' %}" style="font-weight: 500;">View Details</a>
+                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-6 col-md-6">
-            <div class="card bg-warning text-white mb-4">
-                <div class="card-body">Tickets</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'admin-tickets' %}">View Details</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-6 col-md-6">
-            <div class="card bg-danger text-white mb-4">
-                <div class="card-body">Sales</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'ticket-sales' %}">View Details</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+
+        <!-- Sales Overview Section -->
+        <div class="row mt-5">
+            <div class="col-xl-12">
+                <div class="card shadow-sm mb-4" style="border-radius: 10px; border-left: 5px solid #28a745;">
+                    <div class="card-header text-success" style="font-weight: bold; font-size: 1.2rem;">
+                        <i class="fas fa-chart-bar"></i> Sales Overview
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Track ticket sales over the last month.</p>
+                        <canvas id="salesChart" width="100%" height="40"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-</div>
-</main>
+</body>
+
+<!-- Sales Chart Script -->
+<script>
+    var ctx = document.getElementById('salesChart').getContext('2d');
+    var salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Ticket Sales',
+                data: [1500, 2000, 1800, 2200],
+                backgroundColor: 'rgba(255,99,132,0.2)',
+                borderColor: 'rgba(255,99,132,1)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: 'rgba(255,99,132,1)'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
 {% endblock %}

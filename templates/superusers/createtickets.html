@@ -1,30 +1,39 @@
 {% extends 'partials/base.html'%}
-{% load static%}
+{% load static %}
 {% load crispy_forms_tags %}
-{% block title %}Create tickets{% endblock %}
+{% block title %}Create Ticket{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
 
 <body class="sb-nav-fixed">
-{% include 'includes/sidebar.html' %}
+    {% include 'includes/sidebar.html' %}
 
+    <!-- Main Container for the Ticket Form -->
+    <div class="container my-5">
+        <h1 class="text-center mb-5" style="font-weight: 700; font-size: 2.5rem; color: #ffc107;">🎟️ Create a New Ticket</h1>
 
-    <div class="container mt-5">
-        <div class="row mt-3">
-            <div class="col-md-6 offset-md-3">
-                <div class="border bg-white p-3">
-                    <h3>Create Ticket</h3>
-                    <form method="post" enctype="multipart/form-data">
+        <div class="row justify-content-center">
+            <!-- Create Ticket Form Card -->
+            <div class="col-lg-8">
+                <div class="card shadow-lg p-5" style="border-radius: 15px; background-color: #fdfdfd;">
+                    <h3 class="card-title text-center mb-4" style="color: #007bff; font-weight: bold;">🎟️ Ticket Details</h3>
+                    
+                    <!-- Form Start -->
+                    <form method="post" enctype="multipart/form-data" style="font-size: 1.1rem;">
                         {% csrf_token %}
                         {{ form|crispy }}
-                        <input class="btn btn-success mt-3" type="submit" value="Add ticket">
-
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning btn-lg mt-4" type="submit" style="border-radius: 30px;">
+                                🚀 Add Ticket
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-
+</body>
 {% endblock %}

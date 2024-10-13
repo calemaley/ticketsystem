@@ -1,45 +1,66 @@
 {% extends 'partials/base.html' %}
+{% load static %}
 {% block title %}Events{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Events</h1>
-    
-    <!-- Search and Filter Form -->
-    <div class="mb-4">
-        <form method="GET" action="{% url 'event-page' %}">
-            <div class="input-group mb-3">
-                <!-- Search Input -->
-                <input type="text" class="form-control" name="search" placeholder="Search events" value="{{ search_query }}">
-                <!-- Filter Dropdown -->
-                <select class="form-select" name="event_type">
+    <h1 class="text-center mb-4" style="background: linear-gradient(90deg, rgba(0,102,204,1) 0%, rgba(0,153,153,1) 100%); color: white; font-weight: bold;">Find Your Event</h1>
+
+    <!-- Search and Filter Form with Bootstrap Inline Styling -->
+    <div class="mb-4" style="background-color: #e0f4f5; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        <form method="GET" action="{% url 'event-page' %}" autocomplete="off">
+            <div class="input-group mb-3 position-relative">
+                <!-- Event Name Input with Auto-Complete and Styling -->
+                <input type="text" id="search_input_events" class="form-control" name="search" placeholder="Search events" onkeyup="fetchSuggestions('search_input_events', 'suggestions_events')" value="{{ search_query }}" style="padding: 15px; border: 2px solid #007bff; border-radius: 10px 0 0 10px; background-color: #e0f4f5;" />
+                
+                <!-- Auto-suggestions for event -->
+                <div id="suggestions_events" class="dropdown-menu" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 1000; background-color: white; border: 1px solid #ddd; border-radius: 5px; max-height: 200px; overflow-y: auto;"></div>
+
+                <!-- Location Input with Auto-Complete and Styling -->
+                <input type="text" id="location_input_events" class="form-control" name="location" placeholder="Enter location" onkeyup="fetchLocationSuggestions('location_input_events', 'location_suggestions_events')" value="{{ location_filter }}" style="padding: 15px; border: 2px solid #007bff; background-color: #e0f4f5;" />
+
+                <!-- Auto-suggestions for location -->
+                <div id="location_suggestions_events" class="dropdown-menu" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 1000; background-color: white; border: 1px solid #ddd; border-radius: 5px; max-height: 200px; overflow-y: auto;"></div>
+
+                <!-- Event Type Dropdown with Styling -->
+                <select class="form-select" name="event_type" style="padding: 15px; border: 2px solid #007bff; background-color: #e0f4f5;">
                     <option value="">All Events</option>
                     {% for type in event_types %}
-                        <option value="{{ type.event_type }}" {% if event_type_filter == type.event_type %}selected{% endif %}>
-                            {{ type.event_type|title }}
-                        </option>
+                        <option value="{{ type.event_type }}" {% if event_type_filter == type.event_type %}selected{% endif %}>{{ type.event_type|title }}</option>
                     {% endfor %}
                 </select>
-                <!-- Submit Button -->
-                <button class="btn btn-primary" type="submit">Search</button>
+
+                <!-- Submit Button with Styling -->
+                <button class="btn btn-primary" type="submit" style="padding: 15px 25px; background-color: #007bff; border: none; border-radius: 0 10px 10px 0; font-weight: bold;">
+                    <i class="fas fa-search"></i> Search
+                </button>
             </div>
         </form>
     </div>
-    
+
+    <!-- Event Listings -->
     <div class="row">
         {% for event in events %}
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-light h-100">
-                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}">
+                <div class="card shadow-sm h-100" style="border-radius: 10px; background-color: #f7f9fb;"> <!-- Updated Background Color -->
+                    <!-- Event Image -->
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" style="border-top-left-radius: 10px; border-top-right-radius: 10px; height: 250px; object-fit: cover;">
+                    
+                    <!-- Card Body -->
                     <div class="card-body text-center">
-                        <a href="{% url 'event-detail' event.id %}" class="text-decoration-none">
-                            <h5 class="card-title text-primary">{{ event.name }}</h5>
-                        </a>
+                        <!-- Event Date and Time -->
+                        <p class="text-danger font-weight-bold">
+                            <i class="fas fa-calendar-alt"></i> {{ event.date|date:"D d M Y" }} 
+                            <i class="fas fa-clock text-warning"></i> {{ event.start_time|time:"h:i A" }}
+                        </p>
+                        <!-- Event Name -->
+                        <h5 class="card-title font-weight-bold" style="color: #007bff;">{{ event.name }}</h5>
+                        <!-- Event Location -->
                         <p class="card-text text-muted">{{ event.location }}, {{ event.venue_details }}</p>
-                        <p class="card-text text-muted">Type: {{ event.get_event_type_display }}</p>
-                        <!-- Add the price paragraph here -->
-                        <p class="text-danger">Price: KSH {{ event.price }}</p>
-                        <a href="{% url 'event-detail' event.id %}" class="btn btn-primary">View Event</a>
+                        <!-- Event Price -->
+                        <p class="text-danger font-weight-bold">Starting KES {{ event.price }}</p>
+                        <!-- View Event Button -->
+                        <a href="{% url 'event-detail' event.id %}" class="btn btn-outline-primary" style="border-radius: 30px;">View Event</a>
                     </div>
                 </div>
             </div>
@@ -50,4 +71,73 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+  function fetchSuggestions(inputId, suggestionsId) {
+      let search_input = document.getElementById(inputId).value;
+
+      if (search_input.length > 0) {
+          fetch(`/search-suggestions/?query=${search_input}`)
+              .then(response => response.json())
+              .then(data => {
+                  let suggestionsBox = document.getElementById(suggestionsId);
+                  suggestionsBox.innerHTML = '';  
+                  data.suggestions.forEach(item => {
+                      let suggestionItem = document.createElement('a');
+                      suggestionItem.href = `/eventdetail/${item.id}/`;
+                      suggestionItem.classList.add('dropdown-item');
+                      
+                      suggestionItem.innerHTML = `
+                          <div class="d-flex align-items-center">
+                              <img src="${item.image_url}" alt="${item.name}" style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%;">
+                              <span>${item.name}</span>
+                          </div>
+                      `;
+                      suggestionsBox.appendChild(suggestionItem);
+                  });
+                  suggestionsBox.style.display = 'block';
+              });
+      } else {
+          document.getElementById(suggestionsId).style.display = 'none';
+      }
+  }
+
+  function fetchLocationSuggestions(locationInputId, suggestionsId) {
+      let location_input = document.getElementById(locationInputId).value;
+
+      if (location_input.length > 0) {
+          fetch(`/location-suggestions/?query=${location_input}`)
+              .then(response => response.json())
+              .then(data => {
+                  let suggestionsBox = document.getElementById(suggestionsId);
+                  suggestionsBox.innerHTML = '';  
+                  data.suggestions.forEach(item => {
+                      let suggestionItem = document.createElement('a');
+                      suggestionItem.classList.add('dropdown-item');
+                      
+                      suggestionItem.innerHTML = `
+                          <div class="d-flex align-items-center">
+                              <i class="fas fa-map-marker-alt" style="color: red; margin-right: 10px;"></i>
+                              <span>${item.location}</span>
+                          </div>
+                      `;
+                      suggestionsBox.appendChild(suggestionItem);
+                  });
+                  suggestionsBox.style.display = 'block';
+              });
+      } else {
+          document.getElementById(suggestionsId).style.display = 'none';
+      }
+  }
+
+  document.addEventListener('click', function(event) {
+      let suggestionsBoxes = document.querySelectorAll('.dropdown-menu');
+      suggestionsBoxes.forEach(function(suggestionsBox) {
+          if (!suggestionsBox.contains(event.target)) {
+              suggestionsBox.style.display = 'none';
+          }
+      });
+  });
+</script>
+
 {% endblock %}

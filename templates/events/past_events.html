@@ -1,0 +1,33 @@
+{% extends 'partials/base.html' %}
+{% load static %} 
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4" style="color: #ff6f61; font-weight: bold; font-size: 2.5rem;">Past Events</h1>
+
+    {% if events %}
+        <div class="row justify-content-center">
+            {% for event in events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-lg border-0 h-100" style="border-radius: 15px;">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" style="border-top-left-radius: 15px; border-top-right-radius: 15px; height: 350px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'path/to/default/image.jpg' %}" class="card-img-top" alt="Default Image" style="border-top-left-radius: 15px; border-top-right-radius: 15px; height: 350px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body" style="background-color: #f7f7f7; padding: 20px;">
+                            <h5 class="card-title" style="font-weight: bold; color: #343a40; font-size: 1.5rem;">{{ event.name }}</h5>
+                            <p class="card-text" style="color: #6c757d;">
+                                <i class="fas fa-calendar-alt text-danger"></i> <strong>Date:</strong> {{ event.date|date:"F j, Y" }}<br>
+                                <i class="fas fa-map-marker-alt text-primary"></i> <strong>Location:</strong> {{ event.location }}
+                            </p>
+                            <a href="{% url 'event-detail' event.id %}" class="btn btn-outline-danger" style="border-radius: 30px; padding: 10px 20px; font-weight: bold;">View Event</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted" style="font-size: 1.2rem;">No past events to display.</p>
+    {% endif %}
+</div>
+{% endblock %}

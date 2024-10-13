@@ -1,0 +1,48 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Tickets with PDFs{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Tickets with Generated PDFs</h2>
+
+    <!-- Display success/error messages -->
+    {% for message in messages %}
+        {% if message %}
+        <div class="alert alert-{{message.tags }}">
+            {{message}}
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="row">
+        {% for ticket in tickets_with_pdf %}
+        <div class="col-md-4">
+            <!-- Ticket Card -->
+            <div class="card shadow-sm mb-4" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ticket.event.name }}</h5>
+                    <p class="card-text">
+                        <strong>Ticket Type:</strong> {{ ticket.ticket_type }}<br>
+                        <strong>Amount:</strong> {{ ticket.amount }}<br>
+                    </p>
+                    {% if ticket.ticket_pdf %}
+                    <!-- Link to view the PDF in a new tab -->
+                    <a href="{{ ticket.ticket_pdf.url }}" class="btn btn-primary btn-sm" target="_blank">
+                        View PDF
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <!-- Action buttons to update or delete PDF -->
+                    <a href="{% url 'ticket-update' ticket.id %}" class="btn btn-info btn-sm">Edit PDF</a>
+                    {% if ticket.ticket_pdf %}
+                    <a href="{% url 'delete_ticket_pdf' ticket.id %}" class="btn btn-danger btn-sm">Delete PDF</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
