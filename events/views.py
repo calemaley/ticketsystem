@@ -750,9 +750,7 @@ def otp_page(request):
         if phone_number and custom_message:
             # Use the phone number and message to send an OTP
             sms_api_url = "https://api2.tiaraconnect.io/api/messaging/sendsms"
-            bearer_token = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0MDYiLCJvaWQiOjQwNiwidWlkIjoiZGE4M2M0M2ItYjhhNC00NTBkLThiYzktMmY2YmEwMzhlMjEyIiwiYXBpZCI6MzIzLCJpYXQiOjE3MTg5OTcyNDAsImV4cCI6MjA1ODk5NzI0MH0.FREAPyL9ZZhy-Wo7rV6q3bu-2Kv657xp48NxJTmBkug1SzpgSDKAfH5vu7VGYjuT_F_97nWwaL65q5-Pst83ww"  
-
-            # Prepare the payload for sending the OTP via SMS
+           
             payload = {
                 'from': 'TECHVOYAGE',
                 'to': phone_number,
